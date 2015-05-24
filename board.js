@@ -35,12 +35,12 @@ var vertices = [
 
 var vertexColors = [
     vec4( 1.0, 0.0, 0.0, 1.0 ),  // red
-    vec4( 0.5, 0.5, 0.5, 1.0 ),  // front
-    vec4( 0.5, 0.5, 0.5, 1.0 ),  // left
-    vec4( 0.5, 0.5, 0.5, 1.0 ),  //   bottom
-    vec4( 0.5, 0.5, 0.5, 1.0 ),  //   back
-    vec4( 0.5, 0.5, 0.5, 1.0 ),  // right
-    vec4( 0.6, 0.6, 0.6, 1.0 ),  // top
+    vec4( 0.7, 0.7, 0.7, 1.0 ),  // front
+    vec4( 0.7, 0.7, 0.7, 1.0 ),  // left
+    vec4( 0.7, 0.7, 0.7, 1.0 ),  //   bottom
+    vec4( 0.7, 0.7, 0.7, 1.0 ),  //   back
+    vec4( 0.7, 0.7, 0.7, 1.0 ),  // right
+    vec4( 0.8, 0.8, 0.8, 1.0 ),  // top
     vec4( 0.0, 1.0, 1.0, 1.0 ),   //   cyan
     
     vec4( 1.0, 1.0, 1.0, 1.0), //white
@@ -74,12 +74,12 @@ var c_x=0;
 var c_angle = 0;    // turn of the camera
 
 
-function configureTexture( image, i ) {
+function configureTexture(image) {
     texture = gl.createTexture();
     gl.bindTexture( gl.TEXTURE_2D, texture );
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true); // flipped cause html and webgl uses different Y coords.
-    gl.texImage2D( gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image );
-
+    gl.texImage2D( gl.TEXTURE_2D, 0, gl.RGB, 
+         gl.RGB, gl.UNSIGNED_BYTE, image );
 
     gl.generateMipmap( gl.TEXTURE_2D );
     gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
@@ -168,11 +168,9 @@ window.onload = function init() {
     gl.vertexAttribPointer( vPosition, 4, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( vPosition );
     
-    
     var tBuffer = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, tBuffer );
-    //gl.bufferData( gl.ARRAY_BUFFER, flatten(texCoordsArray), gl.STATIC_DRAW );
-    
+    gl.bufferData( gl.ARRAY_BUFFER, flatten(texCoordsArray), gl.STATIC_DRAW );
 
     vTexCoord = gl.getAttribLocation( program, "vTexCoord" );
     gl.vertexAttribPointer( vTexCoord, 2, gl.FLOAT, false, 0, 0 );
@@ -181,6 +179,7 @@ window.onload = function init() {
     projectionMatrixLoc = gl.getUniformLocation(program, "projectionMatrix");
     cameraMatrixLoc = gl.getUniformLocation(program, "cameraMatrix");
     modelTransformLoc = gl.getUniformLocation(program, "modelTransform");
+
 
 
     document.addEventListener('keydown', function(event){
@@ -287,21 +286,27 @@ function rotateCube()
         lastUpdateTime = currentTime;
 }
 
-/////////////////////////
-/////Cube Attributes/////
-/////////////////////////
+
 var wall1 = {'name': "cube1", 'pos': [-10,0,-5], 'angle':0, 'scale':[1,2,26], 'rotationSpeed':10, 'rotateAxis': [0,1,0]};
 var wall2 = {'name': "cube1", 'pos': [10,0,-5], 'angle':0, 'scale':[1,2,26], 'rotationSpeed':10, 'rotateAxis': [0,1,0]};
 var wall3 = {'name': "cube1", 'pos': [0,0,-17.5], 'angle':0, 'scale':[21,2,1], 'rotationSpeed':10, 'rotateAxis': [0,1,0]};
 
 
+/////////////////////////
+/////Cube Attributes/////
+/////////////////////////
 
-var cube1 = {'name': "cube1", 'pos': [8,0,-15], 'scale':[1.9,0.95,0.95], 'texImage':"texImage1", 'isAlive':true, 'isDying':false, 'angle':0, 'rotationSpeed':10, 'rotateAxis': [0,1,0]};
-var cube2 = {'name': "cube2", 'pos': [1,0,8], 'scale':[1.9,0.95,0.95], 'texImage':"texImage2", 'isAlive':true, 'isDying':false, 'angle':0, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
-var cube3 = {'name': "cube3", 'pos': [1.5,0,-5], 'scale':[1.9,0.95,0.95], 'texImage':"texImage2", 'isAlive':true, 'isDying':false, 'angle':0, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
-var cube4 = {'name': "cube4", 'pos': [1.5,0,-5], 'scale':[1.9,0.95,0.95], 'texImage':"texImage2", 'isAlive':true, 'isDying':false, 'angle':0, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
+// There are 4 configurable types of cubes that can be configured. 
+// The position is reset when reading the board. 
+// Scale is the same
+
+var cube1 = {'name': "cube1", 'pos': [8,0,-15], 'scale':[1.9,0.95,0.95], 'texImage':"texImage1", 'angle':0, 'rotationSpeed':10, 'rotateAxis': [0,1,0]};
+var cube2 = {'name': "cube2", 'pos': [1,0,8], 'scale':[1.9,0.95,0.95], 'texImage':"texImage2",  'angle':0, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
+var cube3 = {'name': "cube3", 'pos': [1.5,0,-5], 'scale':[1.9,0.95,0.95], 'texImage':"texImage2",  'angle':0, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
+var cube4 = {'name': "cube4", 'pos': [1.5,0,-5], 'scale':[1.9,0.95,0.95], 'texImage':"texImage2",  'angle':0, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
 
 
+// Level 1 board 
 var board1 = 
     //0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17
   [ [0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], // 0
@@ -325,6 +330,8 @@ var board1 =
     [0, 0, 0, 0, 0, 1, 0, 0, 0, 0 ] // 18
   ];
 
+// Get cube position based on its location in the matrix. 
+// The topleft translation is hardcoded. 
 function getCubePos(i, j)
 {
   var topleft = [-8, 0, -15];
@@ -336,54 +343,67 @@ function getCubePos(i, j)
   return [x,y,z];
 }
 
-// level attributes
-var numBlocks;
-var board; 
-var levelNum;
 
-
+// Initializes level, 
 function initLevel(i)
 {
   switch(i)
   {
     case 1:
-      levelNum = 1;
-      board = board1;
-      numBlocks = 17*15;
+      curBoard = board1;
+      //numBlocks = 17*15;
       break;
   }
 }
 
-
+// Returns Cube
 function getCube(i){
     if (i==0) return cube1;
     if (i==1) return cube2;
+    if (i==2) return cube3;
+    if (i==3) return cube4;
 }
 
+// Returns Wall
 function getWall(i){
     if (i==0) return wall1;
     if (i==1) return wall2;
     if (i==2) return wall3;
 }
 
+
+// level attributes
+var curLevel = 0;
+var curBoard; 
+var resetBoard = true;
+
 var render = function(){
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-
+    // Configure Projection Matrix
     var projectionMatrix = perspective(fovy, aspect, near, far);
+    gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix) );
 
+
+    // Configure Camera Matrix
     var cameraMatrix = mat4();
     cameraMatrix = mult(cameraMatrix, rotate(c_angle, [0,1,0]));
     cameraMatrix = mult(cameraMatrix, rotate(30, [1,0,0]));
     cameraMatrix = mult(cameraMatrix, translate(c_x,c_y,c_z));
 
-
     gl.uniformMatrix4fv(cameraMatrixLoc, false, flatten(cameraMatrix) );
-    gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix) );
+
+    if (resetBoard)
+    {
+      initLevel(curLevel+1);
+      resetBoard = false; // make reset board = true when all blocks are destroyed. 
+    }
+
 
     var image;
-
     // initialize Wall
+    image = document.getElementById("texImage1");  //texImage1 and texImage2 loaded by html.
+    configureTexture(image);
     
     for (var i = 0; i < 3; i++)
     {
@@ -392,74 +412,52 @@ var render = function(){
       // Transform model, translate and rotate
       var modelTransform = mat4();
       modelTransform = mult(modelTransform, translate(cur.pos));
-      modelTransform = mult(modelTransform, rotate(cur.angle, cur.rotateAxis));
       modelTransform = mult(modelTransform, scale(cur.scale));
       gl.uniformMatrix4fv(modelTransformLoc, false, flatten(modelTransform) );
-
-      // Configure texture for current cube
-      image = document.getElementById("texImage1");  //texImage1 and texImage2 loaded by html.
-      configureTexture( image, 0 );
-
-      // update texCoord to shader. 
-      gl.bufferData( gl.ARRAY_BUFFER, flatten(texCoordsArray), gl.STATIC_DRAW );
 
       gl.drawArrays( gl.TRIANGLES, 0, numVertices );
     }
     
+
+    /////////////////////
+    // Configure Cubes///
+
+    // TODO: move this into the cubes building code for variable textures. 
+    // Currently this sets all cubes as the same texture. 
+    image = document.getElementById("texImage2");  //texImage1 and texImage2 loaded by html.
+    configureTexture( image);
+    
+    // Loop inside board to configure
     for (var i = 0; i < 19; i++)
     {
       var cur;
         for (var j = 0; j < 8; j++)
         {
           //console.log(i + ' ' + j);
-            switch(board1[i][j])
+            switch(curBoard[i][j])
             {
               case 1:
                 cur = cube1;
                 cur.pos = getCubePos(i,j);
                 break;
+              default: // skip block and don't draw.
+                continue;
             }
+
             var modelTransform = mat4();
             modelTransform = mult(modelTransform, translate(cur.pos));
             modelTransform = mult(modelTransform, rotate(cur.angle, cur.rotateAxis));
             modelTransform = mult(modelTransform, scale(cur.scale));
             gl.uniformMatrix4fv(modelTransformLoc, false, flatten(modelTransform) );
 
-            // Configure texture for current cube
-            //image = document.getElementById(cur.texImage);  //texImage1 and texImage2 loaded by html.
-            //configureTexture( image, 0 );
+            // Put code here to Configure texture for current cube
 
-            // update texCoord to shader. 
-            //gl.bufferData( gl.ARRAY_BUFFER, flatten(texCoordsArray), gl.STATIC_DRAW );
+
             gl.drawArrays( gl.TRIANGLES, 0, numVertices );
 
 
         }
-    }
-
-
-
-/*
-    for (var i = 0; i < 2; i++)
-    {
-      var cur = getCube(i);
-
-      // Transform model, translate and rotate
-      var modelTransform = mat4();
-      modelTransform = mult(modelTransform, translate(cur.pos));
-      modelTransform = mult(modelTransform, rotate(cur.angle, cur.rotateAxis));
-      modelTransform = mult(modelTransform, scale(cur.scale));
-      gl.uniformMatrix4fv(modelTransformLoc, false, flatten(modelTransform) );
-
-      // Configure texture for current cube
-      image = document.getElementById(cur.texImage);  //texImage1 and texImage2 loaded by html.
-      configureTexture( image, 0 );
-
-      // update texCoord to shader. 
-      gl.bufferData( gl.ARRAY_BUFFER, flatten(texCoordsArray), gl.STATIC_DRAW );
-      gl.drawArrays( gl.TRIANGLES, 0, numVertices );
-    }
-    */
+    }    
     
 
     //rotate cube
