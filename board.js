@@ -12,6 +12,7 @@ var program;
 var pointsArray = [];
 var colorsArray = [];
 var texCoordsArray = [];
+var texCoordsArray2 = [];
 
 var texture;
 
@@ -20,6 +21,13 @@ var texCoord = [
     vec2(0, 1),
     vec2(1, 1),
     vec2(1, 0), 
+
+
+    vec2(0, 0),
+    vec2(0, 2),
+    vec2(16, 2),
+    vec2(16, 0)
+
 ];
 
 var vertices = [
@@ -35,7 +43,7 @@ var vertices = [
 
 var vertexColors = [
     vec4( 1.0, 0.0, 0.0, 1.0 ),  // red
-    vec4( 0.7, 0.7, 0.7, 1.0 ),  // front
+    vec4( 0.1, 0.1, 0.1, 1.0 ),  // front
     vec4( 0.7, 0.7, 0.7, 1.0 ),  // left
     vec4( 0.7, 0.7, 0.7, 1.0 ),  //   bottom
     vec4( 0.7, 0.7, 0.7, 1.0 ),  //   back
@@ -115,6 +123,13 @@ function quad(a, b, c, d) {
      pointsArray.push(vertices[d]); 
      colorsArray.push(vertexColors[a]);
      texCoordsArray.push(texCoord[3]);  
+
+    texCoordsArray2.push(texCoord[0+4]);
+    texCoordsArray2.push(texCoord[1+4]);   
+    texCoordsArray2.push(texCoord[2+4]); 
+    texCoordsArray2.push(texCoord[0+4]); 
+    texCoordsArray2.push(texCoord[2+4]); 
+    texCoordsArray2.push(texCoord[3+4]);  
 
 }
 
@@ -255,6 +270,30 @@ window.onload = function init() {
           c_angle = 0;
           fovy = fovy_init;
         }
+
+        else if (event.keyCode == 66)
+          // q to reset
+        {
+          for (var i = 0; i < 19; i++)
+          {
+            if (board1[i][5] == 0)
+              board1[i][5] = 1;
+            else
+              board1[i][5] = 0;
+          }
+        }
+
+        else if (event.keyCode == 49)
+        {
+          curLevel=1;
+          resetBoard = true;
+        }
+
+        else if (event.keyCode == 50)
+        {
+          curLevel=2;
+          resetBoard = true;
+        }
            
     });
 
@@ -289,7 +328,7 @@ function rotateCube()
 
 var wall1 = {'name': "cube1", 'pos': [-10,0,-5], 'angle':0, 'scale':[1,2,26], 'rotationSpeed':10, 'rotateAxis': [0,1,0]};
 var wall2 = {'name': "cube1", 'pos': [10,0,-5], 'angle':0, 'scale':[1,2,26], 'rotationSpeed':10, 'rotateAxis': [0,1,0]};
-var wall3 = {'name': "cube1", 'pos': [0,0,-17.5], 'angle':0, 'scale':[21,2,1], 'rotationSpeed':10, 'rotateAxis': [0,1,0]};
+var wall3 = {'name': "cube1", 'pos': [0,0,-17.5], 'angle':180, 'scale':[21,2,1], 'rotationSpeed':10, 'rotateAxis': [0,1,0]};
 
 
 /////////////////////////
@@ -300,34 +339,57 @@ var wall3 = {'name': "cube1", 'pos': [0,0,-17.5], 'angle':0, 'scale':[21,2,1], '
 // The position is reset when reading the board. 
 // Scale is the same
 
-var cube1 = {'name': "cube1", 'pos': [8,0,-15], 'scale':[1.9,0.95,0.95], 'texImage':"texImage1", 'angle':0, 'rotationSpeed':10, 'rotateAxis': [0,1,0]};
-var cube2 = {'name': "cube2", 'pos': [1,0,8], 'scale':[1.9,0.95,0.95], 'texImage':"texImage2",  'angle':0, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
-var cube3 = {'name': "cube3", 'pos': [1.5,0,-5], 'scale':[1.9,0.95,0.95], 'texImage':"texImage2",  'angle':0, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
-var cube4 = {'name': "cube4", 'pos': [1.5,0,-5], 'scale':[1.9,0.95,0.95], 'texImage':"texImage2",  'angle':0, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
+var cube1 = {'name': "cube1", 'pos': [8,0,-15], 'scale':[1.9,0.95,0.95], 'texImage':"texImage1", 'angle':180, 'rotationSpeed':10, 'rotateAxis': [0,1,0]};
+var cube2 = {'name': "cube2", 'pos': [1,0,8], 'scale':[1.9,0.95,0.95], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
+var cube3 = {'name': "cube3", 'pos': [1.5,0,-5], 'scale':[1.9,0.95,0.95], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
+var cube4 = {'name': "cube4", 'pos': [1.5,0,-5], 'scale':[1.9,0.95,0.95], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
 
 
 // Level 1 board 
 var board1 = 
     //0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17
-  [ [0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], // 0
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], // 1
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], // 2
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], // 3
-    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0 ], // 4
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], // 5
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], // 6
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], // 7
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], // 8
-    [0, 0, 0, 1, 0, 0, 1, 0, 0, 0 ], // 9
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], // 10
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], // 11
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], // 12
-    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0 ], // 13
-    [0, 1, 0, 0, 0, 1, 0, 0, 0, 0 ], // 14
-    [0, 1, 0, 0, 0, 1, 0, 0, 0, 0 ], // 15
-    [0, 1, 0, 0, 0, 1, 0, 0, 0, 0 ], // 16
-    [0, 1, 0, 0, 0, 1, 0, 0, 0, 0 ], // 17
-    [0, 0, 0, 0, 0, 1, 0, 0, 0, 0 ] // 18
+                                //cut off, 
+  [ [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ], // 0
+    [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ], // 1
+    [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ], // 2
+    [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ], // 3
+    [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ], // 4
+    [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ], // 5
+    [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ], // 6
+    [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ], // 7
+    [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ], // 8
+    [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ], // 9
+    [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ], // 10
+    [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ], // 11
+    [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ], // 12
+    [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ], // 13
+    [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ], // 14
+    [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ], // 15
+    [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ], // 16
+    [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ], // 17
+    [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ] // 18
+  ];
+
+var board2 =
+  [ [1, 0, 0, 0, 0, 0, 0, 0, 1,  1, 1 ], // 0
+    [0, 0, 0, 0, 0, 0, 0, 0, 0,  0, 0 ], // 1
+    [0, 0, 0, 0, 0, 0, 0, 0, 0,  0, 0 ], // 2
+    [0, 0, 0, 0, 0, 0, 0, 0, 0,  0, 0 ], // 3
+    [0, 0, 0, 0, 1, 0, 0, 0, 0,  0, 0 ], // 4
+    [0, 0, 0, 0, 0, 0, 0, 0, 0,  0, 0 ], // 5
+    [0, 0, 0, 0, 0, 0, 0, 0, 0,  0, 0 ], // 6
+    [0, 0, 0, 0, 0, 0, 0, 0, 0,  0, 0 ], // 7
+    [0, 0, 0, 0, 0, 0, 0, 0, 0,  0, 0 ], // 8
+    [0, 0, 0, 1, 0, 0, 1, 0, 0,  0, 0 ], // 9
+    [0, 0, 0, 0, 0, 0, 0, 0, 0,  0, 0 ], // 10
+    [0, 0, 0, 0, 0, 0, 0, 0, 0,  0, 0 ], // 11
+    [0, 0, 0, 0, 0, 0, 0, 0, 0,  0, 0 ], // 12
+    [0, 1, 0, 0, 0, 0, 0, 0, 0,  0, 0 ], // 13
+    [0, 1, 0, 0, 0, 1, 0, 0, 0,  0, 0 ], // 14
+    [0, 1, 0, 0, 0, 1, 0, 0, 0,  0, 0 ], // 15
+    [0, 1, 0, 0, 0, 1, 0, 0, 0,  0, 0 ], // 16
+    [0, 1, 0, 0, 0, 1, 0, 0, 0,  0, 0 ], // 17
+    [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ] // 18
   ];
 
 // Get cube position based on its location in the matrix. 
@@ -353,6 +415,11 @@ function initLevel(i)
       curBoard = board1;
       //numBlocks = 17*15;
       break;
+    case 2:
+      curBoard = board2;
+      break;
+    default:
+      curBoard = board1;
   }
 }
 
@@ -373,9 +440,10 @@ function getWall(i){
 
 
 // level attributes
-var curLevel = 0;
+var curLevel = 1;
 var curBoard; 
 var resetBoard = true;
+var dyingCubes = [];
 
 var render = function(){
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -395,7 +463,7 @@ var render = function(){
 
     if (resetBoard)
     {
-      initLevel(curLevel+1);
+      initLevel(curLevel);
       resetBoard = false; // make reset board = true when all blocks are destroyed. 
     }
 
@@ -404,7 +472,8 @@ var render = function(){
     // initialize Wall
     image = document.getElementById("texImage1");  //texImage1 and texImage2 loaded by html.
     configureTexture(image);
-    
+    gl.bufferData( gl.ARRAY_BUFFER, flatten(texCoordsArray2), gl.STATIC_DRAW );
+
     for (var i = 0; i < 3; i++)
     {
       var cur = getWall(i);
@@ -412,6 +481,7 @@ var render = function(){
       // Transform model, translate and rotate
       var modelTransform = mat4();
       modelTransform = mult(modelTransform, translate(cur.pos));
+      modelTransform = mult(modelTransform, rotate(cur.angle, cur.rotateAxis));
       modelTransform = mult(modelTransform, scale(cur.scale));
       gl.uniformMatrix4fv(modelTransformLoc, false, flatten(modelTransform) );
 
@@ -426,12 +496,12 @@ var render = function(){
     // Currently this sets all cubes as the same texture. 
     image = document.getElementById("texImage2");  //texImage1 and texImage2 loaded by html.
     configureTexture( image);
-    
+    gl.bufferData( gl.ARRAY_BUFFER, flatten(texCoordsArray), gl.STATIC_DRAW );
     // Loop inside board to configure
     for (var i = 0; i < 19; i++)
     {
       var cur;
-        for (var j = 0; j < 8; j++)
+        for (var j = 0; j < 9; j++)
         {
           //console.log(i + ' ' + j);
             switch(curBoard[i][j])
