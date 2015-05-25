@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+
+
+
+<script id="vertex-shader" type="x-shader/x-vertex">
+attribute  vec4 vPosition;
+attribute  vec4 vColor;
+attribute  vec2 vTexCoord;
+varying vec4 fColor;
+varying vec2 fTexCoord;
+uniform mat4 projectionMatrix; 	// projection
+uniform mat4 cameraMatrix; 		// camera
+uniform mat4 modelTransform;	// modelTransform 
+uniform bool drawingSphere;
+void main() 
+{               
+    fColor = vColor;
+	if (!drawingSphere){
+		fTexCoord = vTexCoord;
+	}
+    gl_Position = projectionMatrix * cameraMatrix * modelTransform * vPosition;
+} 
+</script>
+
+<script id="fragment-shader" type="x-shader/x-fragment">
+precision mediump float;
+varying vec4 fColor;
+varying  vec2 fTexCoord;
+uniform sampler2D texture;
+
+uniform bool drawingSphere;
+void
+main()
+{
+	if (!drawingSphere){
+		gl_FragColor = fColor * texture2D( texture, fTexCoord );
+		//gl_FragColor = vec4(0.0,1.0,0.0,1.0);
+	} else {
+		gl_FragColor = vec4(1.0,0.0,0.0,1.0);
+	}
+	
+    // apply texture directly without color. 
+    //gl_FragColor = texture2D( texture, fTexCoord );
+}
+</script>
+
+<script type="text/javascript" src="./Common/webgl-utils.js"></script>
+<script type="text/javascript" src="./Common/initShaders.js"></script>
+<script type="text/javascript" src="./Common/MV.js"></script>
+<script type="text/javascript" src="board.js"></script>
+
+
+<body>
+<canvas id="gl-canvas" width="960" height="540">
+Oops ... your browser doesn't support the HTML5 canvas element
+</canvas>
+<img id = "texImage1" src = "pictures/stone.jpg" hidden></img>
+<img id = "texImage2" src = "pictures/bricks.jpg" hidden></img>
+</body>
+</html>
