@@ -626,8 +626,8 @@ var render = function(){
 				
 				// We add a bounding volume for every brick that we draw.
 				// These bounding volumes are contained in a list of lists.
-				BV[index] = [cur.pos[0] - 0.95, cur.pos[1] - 0.475, cur.pos[2] - 0.475,
-								cur.pos[0] + 0.95, cur.pos[1] + 0.475, cur.pos[2] + 0.475];
+				BV[index] = [cur.pos[0] - cube1.scale[0]/2, cur.pos[1] - cube1.scale[1]/2, cur.pos[2] - cube1.scale[2]/2,
+								cur.pos[0] + cube1.scale[0]/2, cur.pos[1] + cube1.scale[1]/2, cur.pos[2] + cube1.scale[2]/2];
 				index += 1;
 				
                 break;
@@ -661,11 +661,11 @@ var render = function(){
 		}
 	}
 	if (subtract_z == true) {
-		dz += 0.01;
+		dz += 0.05;
 	} else {
-		dz -= 0.01;
+		dz -= 0.05;
 	}
-	dx += 0.01;
+	//dx += 0.01;
 	sphereBV[0] = 0.0 + dx; // We have to update the BV every time we translate the sphere.
 	sphereBV[1] = 0.0 + dy; // So we have these statements that add d_ to the initial position of the sphere.
 	sphereBV[2] = 5.0 + dz; // This one is 5.0 because the initial z value of the sphere is 5.0
