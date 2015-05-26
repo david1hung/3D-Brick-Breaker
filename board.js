@@ -89,16 +89,17 @@ var vColor;
 // Perspective Setup
 var near = 0.1; //0.2 , 40
 var far = 100.0;
-var fovy_init = 45.0;
+var fovy_init = 40.0;
 var fovy = fovy_init;  // Field-of-view in Y direction angle (in degrees)
 var aspect;
 
 var c_zInit = -21;  // Initial position
 var c_z=c_zInit;    // dx, dy, dz of the camera
-var c_yInit = -11;
+var c_yInit = -13;
 var c_y=c_yInit;
 var c_x=0;
-var c_angle = 0;    // turn of the camera
+var c_angle_yaw= 0;    // turn of the camera
+var c_angle_pitch = 35;
 
 
 function configureTexture(image) {
@@ -323,38 +324,38 @@ window.onload = function init() {
         }
         else if (event.keyCode ==37){
             // left, turn left
-            c_angle -= 1;
+            c_angle_yaw -= 1;
         }
         else if (event.keyCode ==39){
             // right, turn right
-            c_angle += 1;
+            c_angle_yaw += 1;
         }
         else if (event.keyCode == 73){
             //i key go forward
 
-            c_z += 0.25 * Math.cos(radians(c_angle));   // cosine and sine for proper motion
+            c_z += 0.25 * Math.cos(radians(c_angle_yaw));   // cosine and sine for proper motion
 
-            c_x -= 0.25 * Math.sin(radians(c_angle));
+            c_x -= 0.25 * Math.sin(radians(c_angle_yaw));
         }
         else if (event.keyCode == 79) {
             //o key go backward   or m 
-            c_z -= 0.25 * Math.cos(radians(c_angle));
-            c_x += 0.25 * Math.sin(radians(c_angle));
+            c_z -= 0.25 * Math.cos(radians(c_angle_yaw));
+            c_x += 0.25 * Math.sin(radians(c_angle_yaw));
         }
         else if (event.keyCode == 77) {
             //m key to go backward also
-            c_z -= 0.25 * Math.cos(radians(c_angle));
-            c_x += 0.25 * Math.sin(radians(c_angle));
+            c_z -= 0.25 * Math.cos(radians(c_angle_yaw));
+            c_x += 0.25 * Math.sin(radians(c_angle_yaw));
         }
         else if (event.keyCode == 74){
             //j key go left
-            c_x += 0.25*Math.cos(radians(c_angle));
-			c_z += 0.25*Math.sin(radians(c_angle));
+            c_x += 0.25*Math.cos(radians(c_angle_yaw));
+			c_z += 0.25*Math.sin(radians(c_angle_yaw));
         }
         else if (event.keyCode == 75){
             //k key go right
-            c_x -= 0.25*Math.cos(radians(c_angle));
-			c_z -= 0.25*Math.sin(radians(c_angle));
+            c_x -= 0.25*Math.cos(radians(c_angle_yaw));
+			c_z -= 0.25*Math.sin(radians(c_angle_yaw));
         }
 
         else if (event.keyCode == 82) {
@@ -384,7 +385,7 @@ window.onload = function init() {
           c_x = 0;
           c_y = c_yInit;
           c_z = c_zInit;
-          c_angle = 0;
+          c_angle_yaw = 0;
           fovy = fovy_init;
         }
 
@@ -400,17 +401,35 @@ window.onload = function init() {
           }
         }
 
+        // key '1' intialized level 1
         else if (event.keyCode == 49)
         {
           curLevel=1;
           resetBoard = true;
         }
 
+        // key '2' intialized level 2
         else if (event.keyCode == 50)
         {
           curLevel=2;
           resetBoard = true;
         }
+
+        // Key '9' fills board
+        else if (event.keyCode == 57)
+        {
+          curLevel=-1;
+          resetBoard = true;
+        }
+
+        // Key '0' Empties Board
+        else if (event.keyCode == 48)
+        {
+          curLevel=0;
+          resetBoard = true;
+        }
+
+        console.log("Event");
            
     });
 
@@ -456,58 +475,12 @@ var wall3 = {'name': "cube1", 'pos': [0,0,-17.5], 'angle':180, 'scale':[21,2,1],
 // The position is reset when reading the board. 
 // Scale is the same
 
-var cube1 = {'name': "cube1", 'pos': [8,0,-15], 'scale':[1.9,0.95,0.95], 'texImage':"texImage1", 'angle':180, 'rotationSpeed':10, 'rotateAxis': [0,1,0]};
-var cube2 = {'name': "cube2", 'pos': [1,0,8], 'scale':[1.9,0.95,0.95], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
-var cube3 = {'name': "cube3", 'pos': [1.5,0,-5], 'scale':[1.9,0.95,0.95], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
-var cube4 = {'name': "cube4", 'pos': [1.5,0,-5], 'scale':[1.9,0.95,0.95], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
+var cube1 = {'name': "cube1", 'pos': [8,0,-15], 'scale':[1.9,0.95,1.9], 'texImage':"texImage1", 'angle':180, 'rotationSpeed':10, 'rotateAxis': [0,1,0]};
+var cube2 = {'name': "cube2", 'pos': [1,0,8], 'scale':[1.9,0.95,1.9], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
+var cube3 = {'name': "cube3", 'pos': [1.5,0,-5], 'scale':[1.9,0.95,1.9], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
+var cube4 = {'name': "cube4", 'pos': [1.5,0,-5], 'scale':[1.9,0.95,1.9], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
 
 
-// Level 1 board 
-var board1 = 
-    //0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17
-                                //cut off, 
-  [ [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ], // 0
-    [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ], // 1
-    [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ], // 2
-    [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ], // 3
-    [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ], // 4
-    [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ], // 5
-    [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ], // 6
-    [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ], // 7
-    [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ], // 8
-    [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ], // 9
-    [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ], // 10
-    [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ], // 11
-    [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ], // 12
-    [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ], // 13
-    [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ], // 14
-    [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ], // 15
-    [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ], // 16
-    [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ], // 17
-    [1, 1, 1, 1, 0, 0, 1, 1, 1,  1, 1 ] // 18
-  ];
-
-var board2 =
-  [ [1, 0, 0, 0, 0, 0, 0, 0, 1,  1, 1 ], // 0
-    [0, 0, 0, 0, 0, 0, 0, 0, 0,  0, 0 ], // 1
-    [0, 0, 0, 0, 0, 0, 0, 0, 0,  0, 0 ], // 2
-    [0, 0, 0, 0, 0, 0, 0, 0, 0,  0, 0 ], // 3
-    [0, 0, 0, 0, 1, 0, 0, 0, 0,  0, 0 ], // 4
-    [0, 0, 0, 0, 0, 0, 0, 0, 0,  0, 0 ], // 5
-    [0, 0, 0, 0, 0, 0, 0, 0, 0,  0, 0 ], // 6
-    [0, 0, 0, 0, 0, 0, 0, 0, 0,  0, 0 ], // 7
-    [0, 0, 0, 0, 0, 0, 0, 0, 0,  0, 0 ], // 8
-    [0, 0, 0, 1, 0, 0, 1, 0, 0,  0, 0 ], // 9
-    [0, 0, 0, 0, 0, 0, 0, 0, 0,  0, 0 ], // 10
-    [0, 0, 0, 0, 0, 0, 0, 0, 0,  0, 0 ], // 11
-    [0, 0, 0, 0, 0, 0, 0, 0, 0,  0, 0 ], // 12
-    [0, 1, 0, 0, 0, 0, 0, 0, 0,  0, 0 ], // 13
-    [0, 1, 0, 0, 0, 1, 0, 0, 0,  0, 0 ], // 14
-    [0, 1, 0, 0, 0, 1, 0, 0, 0,  0, 0 ], // 15
-    [0, 1, 0, 0, 0, 1, 0, 0, 0,  0, 0 ], // 16
-    [0, 1, 0, 0, 0, 1, 0, 0, 0,  0, 0 ], // 17
-    [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1 ] // 18
-  ];
 
 // Get cube position based on its location in the matrix. 
 // The topleft translation is hardcoded. 
@@ -517,7 +490,7 @@ function getCubePos(i, j)
 
   var x = topleft[0]+j*2;
   var y = 0;
-  var z = topleft[2]+i;
+  var z = topleft[2]+i*2;
 
   return [x,y,z];
 }
@@ -526,17 +499,31 @@ function getCubePos(i, j)
 // Initializes level, 
 function initLevel(i)
 {
+  // Board defintions is in levelDef.js
+  console.log("Init Level:" + i);
   switch(i)
   {
+    // Full board
+    case -1:
+      curBoard = board11;
+      break;
+
+      // Empty board
+    case 0:
+      curBoard = board00;
+      break;
+
+      // Level 1
     case 1:
       curBoard = board1;
-      //numBlocks = 17*15;
       break;
+
+      // Level 2
     case 2:
       curBoard = board2;
       break;
     default:
-      curBoard = board1;
+      curBoard = board00;
   }
 }
 
@@ -563,20 +550,6 @@ var resetBoard = true;
 var dyingCubes = [];
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 var render = function(){
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	
@@ -589,8 +562,8 @@ var render = function(){
 
     // Configure Camera Matrix
     var cameraMatrix = mat4();
-    cameraMatrix = mult(cameraMatrix, rotate(c_angle, [0,1,0]));
-    cameraMatrix = mult(cameraMatrix, rotate(30, [1,0,0]));
+    cameraMatrix = mult(cameraMatrix, rotate(c_angle_yaw, [0,1,0]));
+    cameraMatrix = mult(cameraMatrix, rotate(c_angle_pitch, [1,0,0]));
     cameraMatrix = mult(cameraMatrix, translate(c_x,c_y,c_z));
 
     gl.uniformMatrix4fv(cameraMatrixLoc, false, flatten(cameraMatrix) );
@@ -639,7 +612,7 @@ var render = function(){
     configureTexture( image);
     gl.bufferData( gl.ARRAY_BUFFER, flatten(texCoordsArray), gl.STATIC_DRAW );
     // Loop inside board to configure
-    for (var i = 0; i < 19; i++)
+    for (var i = 0; i < 10; i++)
     {
       var cur;
         for (var j = 0; j < 9; j++)
