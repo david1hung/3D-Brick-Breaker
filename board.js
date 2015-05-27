@@ -60,7 +60,7 @@ var vertices = [
 
 var vertexColors = [
     vec4( 1.0, 0.0, 0.0, 1.0 ),  // red
-    vec4( 0.1, 0.1, 0.1, 1.0 ),  // front
+    vec4( 0.7, 0.7, 0.7, 1.0 ),  // front
     vec4( 0.7, 0.7, 0.7, 1.0 ),  // left
     vec4( 0.7, 0.7, 0.7, 1.0 ),  //   bottom
     vec4( 0.7, 0.7, 0.7, 1.0 ),  //   back
@@ -163,9 +163,6 @@ function colorCube()
     quad( 4, 5, 6, 7 );
     quad( 5, 4, 0, 1 );
 }
-
-
-
 
 
 
@@ -324,11 +321,13 @@ window.onload = function init() {
         }
         else if (event.keyCode ==37){
             // left, turn left
-            c_angle_yaw -= 1;
+            //c_angle_yaw -= 1;
+            pad.pos[0] -=0.5;
         }
         else if (event.keyCode ==39){
             // right, turn right
-            c_angle_yaw += 1;
+            //c_angle_yaw += 1;
+            pad.pos[0] +=0.5;
         }
         else if (event.keyCode == 73){
             //i key go forward
@@ -463,9 +462,8 @@ function rotateCube()
 
 
 var wall1 = {'name': "cube1", 'pos': [-10,0,-5], 'angle':0, 'scale':[1,2,26], 'rotationSpeed':10, 'rotateAxis': [0,1,0]};
-var wall2 = {'name': "cube1", 'pos': [10,0,-5], 'angle':0, 'scale':[1,2,26], 'rotationSpeed':10, 'rotateAxis': [0,1,0]};
-var wall3 = {'name': "cube1", 'pos': [0,0,-17.5], 'angle':180, 'scale':[21,2,1], 'rotationSpeed':10, 'rotateAxis': [0,1,0]};
-
+var wall2 = {'name': "cube1", 'pos': [10,0,-5], 'angle':0, 'scale':[1,2,26], 'rotationSpeed':10, 'rotateAxis': [0,1,0]};  // Back wall
+var wall3 = {'name': "cube1", 'pos': [0,0,-17.5], 'angle':180, 'scale':[21,2,1], 'rotationSpeed':10, 'rotateAxis': [0,1,0]}; // Back Wall
 
 /////////////////////////
 /////Cube Attributes/////
@@ -480,7 +478,10 @@ var cube2 = {'name': "cube2", 'pos': [1,0,8], 'scale':[1.9,0.95,1.9], 'texImage'
 var cube3 = {'name': "cube3", 'pos': [1.5,0,-5], 'scale':[1.9,0.95,1.9], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
 var cube4 = {'name': "cube4", 'pos': [1.5,0,-5], 'scale':[1.9,0.95,1.9], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
 
-
+var pad = {'name': "pad", 'pos': [0,0,8.5], 'scale':[4,0.7,0.5], 'texImage':"texImage1", 'angle':180, 'rotationSpeed':10, 'rotateAxis': [0,1,0]};
+function getPad(){
+  return pad;
+}
 
 // Get cube position based on its location in the matrix. 
 // The topleft translation is hardcoded. 
@@ -598,7 +599,6 @@ var render = function(){
       modelTransform = mult(modelTransform, rotate(cur.angle, cur.rotateAxis));
       modelTransform = mult(modelTransform, scale(cur.scale));
       gl.uniformMatrix4fv(modelTransformLoc, false, flatten(modelTransform) );
-
       gl.drawArrays( gl.TRIANGLES, 0, numVertices );
     }
     
@@ -650,6 +650,21 @@ var render = function(){
         }
 		
     }
+
+///////////////////////////////////
+///////////Drawing Pad/////////////
+///////////////////////////////////
+
+  var modelTransform = mat4();
+  modelTransform = mult(modelTransform, translate(pad.pos));
+  modelTransform = mult(modelTransform, rotate(pad.angle, pad.rotateAxis));
+  modelTransform = mult(modelTransform, scale(pad.scale));
+  gl.uniformMatrix4fv(modelTransformLoc, false, flatten(modelTransform) );
+
+  gl.drawArrays( gl.TRIANGLES, 0, numVertices );
+
+
+
 	
 	// Here we test the sphere against every bounding volume we have
 	// (ie, for every brick we are currently drawing). This happens at
@@ -662,10 +677,12 @@ var render = function(){
 	}
 	if (subtract_z == true) {
 		dz += 0.05;
+      dx += 0.01;
 	} else {
 		dz -= 0.05;
+      dx -= 0.01;
 	}
-	//dx += 0.01;
+
 	sphereBV[0] = 0.0 + dx; // We have to update the BV every time we translate the sphere.
 	sphereBV[1] = 0.0 + dy; // So we have these statements that add d_ to the initial position of the sphere.
 	sphereBV[2] = 5.0 + dz; // This one is 5.0 because the initial z value of the sphere is 5.0
@@ -683,8 +700,14 @@ var render = function(){
 	gl.uniform1i(drawingSphere, true);
     gl.drawArrays( gl.TRIANGLES, numVertices, triIndex );
 	
+
+
+
+
+
+
     //rotate cube
-    //rotateCube();
+    rotateCube();
 
     requestAnimFrame(render);
 }
