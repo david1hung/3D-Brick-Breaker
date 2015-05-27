@@ -663,9 +663,11 @@ var render = function(){
 
   gl.drawArrays( gl.TRIANGLES, 0, numVertices );
 
+  // Collision detection for the pad is added here.
+	BV[index] = [pad.pos[0] - pad.scale[0]/2, pad.pos[1] - pad.scale[1]/2, pad.pos[2] - pad.scale[2]/2,
+				pad.pos[0] + pad.scale[0]/2, pad.pos[1] + pad.scale[1]/2, pad.pos[2] + pad.scale[2]/2];
 
-
-	
+	index += 1;
 	// Here we test the sphere against every bounding volume we have
 	// (ie, for every brick we are currently drawing). This happens at
 	// at every render call, so it might be a bit inefficient. We could
