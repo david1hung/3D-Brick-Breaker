@@ -21,7 +21,12 @@ var triIndex = 0;
 var dx = 0.0;
 var dy = 0.0;
 var dz = 0.0;
-var subtract_z = false;
+var moveD = false;
+var moveR = true;
+var CDPause = 0;
+var px = 0.0;
+var padR = false;
+var padL = false;
 
 var texture;
 
@@ -322,12 +327,16 @@ window.onload = function init() {
         else if (event.keyCode ==37){
             // left, turn left
             //c_angle_yaw -= 1;
-            pad.pos[0] -=0.5;
+			padL = true;
+            //pad.pos[0] -=px;
+			//px += 0.01 + px;
         }
         else if (event.keyCode ==39){
             // right, turn right
             //c_angle_yaw += 1;
-            pad.pos[0] +=0.5;
+			padR = true;
+            //pad.pos[0] +=px;
+			//px += 0.01 + px;
         }
         else if (event.keyCode == 73){
             //i key go forward
@@ -431,7 +440,27 @@ window.onload = function init() {
         console.log("Event");
            
     });
+	
+	
+	document.addEventListener('keyup', function(event) {
+		if(event.keyCode == 37) {
+			padL = false;
+			//px = 0.0;
+		} else if (event.keyCode == 39){
+			padR = false;
+			//px = 0.0;
+		}
+	});
 
+	
+
+	
+	BV[0] = [wall1.pos[0] - wall1.scale[0]/2, wall1.pos[1] - wall1.scale[1]/2, wall1.pos[2] - wall1.scale[2]/2,
+				wall1.pos[0] + wall1.scale[0]/2, wall1.pos[1] + wall1.scale[1]/2, wall1.pos[2] + wall1.scale[2]/2];
+	BV[1] = [wall2.pos[0] - wall2.scale[0]/2, wall2.pos[1] - wall2.scale[1]/2, wall2.pos[2] - wall2.scale[2]/2,
+				wall2.pos[0] + wall2.scale[0]/2, wall2.pos[1] + wall2.scale[1]/2, wall2.pos[2] + wall2.scale[2]/2];
+	BV[2] = [wall3.pos[0] - wall3.scale[0]/2, wall3.pos[1] - wall3.scale[1]/2, wall3.pos[2] - wall3.scale[2]/2,
+				wall3.pos[0] + wall3.scale[0]/2, wall3.pos[1] + wall3.scale[1]/2, wall3.pos[2] + wall3.scale[2]/2];
 
     render();
  
@@ -554,7 +583,7 @@ var dyingCubes = [];
 var render = function(){
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	
-	var index = 0;
+	var index = 3;
 
     // Configure Projection Matrix
     var projectionMatrix = perspective(fovy, aspect, near, far);
@@ -656,6 +685,10 @@ var render = function(){
 ///////////////////////////////////
 
   var modelTransform = mat4();
+  if (padR == true)
+	  pad.pos[0] += 0.1;
+  if (padL == true)
+	  pad.pos[0] -= 0.1;
   modelTransform = mult(modelTransform, translate(pad.pos));
   modelTransform = mult(modelTransform, rotate(pad.angle, pad.rotateAxis));
   modelTransform = mult(modelTransform, scale(pad.scale));
@@ -672,19 +705,31 @@ var render = function(){
 	// (ie, for every brick we are currently drawing). This happens at
 	// at every render call, so it might be a bit inefficient. We could
 	// make it better by using bounding volume hierarchies.
-	for (var t = 0; t < index; t++) {
-		if (testSphere(BV[t], sphereBV)) {
-			subtract_z = !subtract_z; // We change the state of the balls movement to bounce back.
+	if (testSphere(BV[0], sphereBV))
+		moveR = true;
+	if (testSphere(BV[1], sphereBV))
+		moveR = false;
+	if (testSphere(BV[2], sphereBV))
+		moveD = true;
+	for (var t = 3; t < index; t++) {
+		if (testSphere(BV[t], sphereBV) && CDPause == 0) {
+			moveD = !moveD; // We change the state of the balls movement to bounce back.
+			CDPause = 3;
 		}
 	}
-	if (subtract_z == true) {
-		dz += 0.05;
-      dx += 0.01;
+	if (CDPause > 0)
+		CDPause -= 1;
+	if (moveD == true) {
+		dz += 0.5;
 	} else {
-		dz -= 0.05;
-      dx -= 0.01;
+		dz -= 0.5;
 	}
-
+	if (moveR == true) {
+		dx += 0.05;
+	} else {
+		dx -= 0.05;
+	}
+	//dx += 0.0235;
 	sphereBV[0] = 0.0 + dx; // We have to update the BV every time we translate the sphere.
 	sphereBV[1] = 0.0 + dy; // So we have these statements that add d_ to the initial position of the sphere.
 	sphereBV[2] = 5.0 + dz; // This one is 5.0 because the initial z value of the sphere is 5.0
@@ -706,7 +751,7 @@ var render = function(){
 
 
 
-
+	px += 0.01;
 
     //rotate cube
     rotateCube();
