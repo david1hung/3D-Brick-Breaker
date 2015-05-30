@@ -522,6 +522,13 @@ var cube2 = {'name': "cube2", 'pos': [1,0,8], 'scale':[1.9,0.95,1.9], 'texImage'
 var cube3 = {'name': "cube3", 'pos': [1.5,0,-5], 'scale':[1.9,0.95,1.9], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
 var cube4 = {'name': "cube4", 'pos': [1.5,0,-5], 'scale':[1.9,0.95,1.9], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
 
+var cube10 = {'name':"dyingCubes", 'pos': [1.5,0,-5], 'scale':[1.9*0.9,0.95*0.9,1.9*0.9], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
+var cube11 = {'name':"dyingCubes", 'pos': [1.5,0,-5], 'scale':[1.9*0.8,0.95*0.8,1.9*0.8], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
+var cube12 = {'name':"dyingCubes", 'pos': [1.5,0,-5], 'scale':[1.9*0.6,0.95*0.6,1.9*0.6], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
+var cube13 = {'name':"dyingCubes", 'pos': [1.5,0,-5], 'scale':[1.9*0.3,0.95*0.3,1.9*0.3], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
+var cube14 = {'name':"dyingCubes", 'pos': [1.5,0,-5], 'scale':[1.9*0.1,0.95*0.1,1.9*0.1], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
+var cube15 = {'name':"dyingCubes", 'pos': [1.5,0,-5], 'scale':[0,0,0], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
+
 var pad = {'name': "pad", 'pos': [0,0,8.5], 'scale':[4,0.7,0.5], 'texImage':"texImage1", 'angle':180, 'rotationSpeed':10, 'rotateAxis': [0,1,0]};
 function getPad(){
   return pad;
@@ -578,6 +585,13 @@ function getCube(i){
     if (i==1) return cube2;
     if (i==2) return cube3;
     if (i==3) return cube4;
+
+    if (i==10) return cube10;
+    if (i==11) return cube11;
+    if (i==12) return cube12;
+    if (i==13) return cube13;
+    if (i==14) return cube14;
+    if (i==15) return cube15;
 }
 
 // Returns Wall
@@ -587,12 +601,13 @@ function getWall(i){
     if (i==2) return wall3;
 }
 
+var offset = 0.4;
+var posOffset = [{'x':offset, 'z':offset}, {'x':offset, 'z':-offset}, {'x':-offset, 'z':offset}, {'x':-offset, 'z':-offset}];
 
 // level attributes
 var curLevel = 1;
 var curBoard; 
 var resetBoard = true;
-var dyingCubes = [];
 
 
 var render = function(){
@@ -655,6 +670,9 @@ var render = function(){
     image = document.getElementById("texImage2");  //texImage1 and texImage2 loaded by html.
     configureTexture( image);
     gl.bufferData( gl.ARRAY_BUFFER, flatten(texCoordsArray), gl.STATIC_DRAW );
+
+    var dyingCubes = [];
+
     // Loop inside board to configure
     for (var i = 0; i < 10; i++)
     {
@@ -678,6 +696,38 @@ var render = function(){
 				index += 1;
 				
                 break;
+              case 10:
+                 cur = getCube(10);
+                 cur.pos = getCubePos(i,j);
+                 curBoard[i][j]=11;
+                 break;
+              case 11:
+                 cur = getCube(11);
+                 cur.pos = getCubePos(i,j);
+                 curBoard[i][j]=12;
+                break;
+              case 12:
+                 cur = getCube(12);
+                 cur.pos = getCubePos(i,j);
+                 curBoard[i][j]=13;
+                break;
+
+              case 13:
+                 cur = getCube(13);
+                 cur.pos = getCubePos(i,j);
+                 curBoard[i][j]=14;
+                break;
+              case 14:
+                 cur = getCube(14);
+                 cur.pos = getCubePos(i,j);
+                 curBoard[i][j]=15;
+                break;
+              case 15:
+                 cur = getCube(15);
+                 cur.pos = getCubePos(i,j);
+                 curBoard[i][j]=10;
+                 continue;
+                  break;;
               default: // skip block and don't draw.
                 continue;
             }
@@ -698,6 +748,40 @@ var render = function(){
 		
     }
 	//updateBV = false;
+
+
+
+    //console.log("length:" + dyingCubes.length);
+
+    /*
+    // Draw dead cubes
+    for (var i = 0; i < dyingCubes.length; i++)
+    {
+      var cur=dyingCubes[i];
+      console.log(cur.pos[0] + ' ' + cur.pos[1] + ' ' + cur.pos[2]);
+      cur.pos[1] = 0.5;
+      var pos;
+      
+      for (var k = 0; k < 4; k++)
+      {
+        pos = [cur.pos[0]+posOffset[k].x , cur.pos[1], cur.pos[2]+posOffset[k].z];
+
+        //console.log(pos[0] + ' ' + pos[1] + ' ' + pos[2]);
+        var modelTransform = mat4();
+        modelTransform = mult(modelTransform, translate(pos));
+        modelTransform = mult(modelTransform, rotate(cur.angle, cur.rotateAxis));
+        modelTransform = mult(modelTransform, scale(cur.scale));
+        gl.uniformMatrix4fv(modelTransformLoc, false, flatten(modelTransform) );
+
+              // Put code here to Configure texture for current cube
+        gl.drawArrays( gl.TRIANGLES, 0, numVertices );
+      }
+
+    }
+    */
+
+
+
 
 ///////////////////////////////////
 ///////////Drawing Pad/////////////
