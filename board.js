@@ -17,6 +17,7 @@ var texCoordsArray2 = [];
 
 var sphereBV = [0.0,0.0,5.0,0.5];
 var BV = [];
+var updateBV = true;
 var triIndex = 0;
 var dx = 0.0;
 var dy = 0.0;
@@ -27,6 +28,7 @@ var CDPause = 0;
 var px = 0.0;
 var padR = false;
 var padL = false;
+var popBV = false;
 
 var texture;
 
@@ -258,6 +260,19 @@ function testSphere( AABB, sphere) {
 }
 
 
+
+
+function testSide( AABB, sphere) {
+	if ((AABB[0] > sphere[0]) && (AABB[0] - sphere[0]) < 0.5) return 1;
+	if ((sphere[0] > AABB[3]) && (sphere[0] - AABB[3]) < 0.5) return 2;
+	//if (Math.abs(sphere[1] - AABB[1]) < sphere[3]) return 3;
+	//if (Math.abs(sphere[1] - AABB[4]) < sphere[3]) return 4;
+	if ((AABB[2] > sphere[2]) && (AABB[2] - sphere[2]) < 0.5) return 6;
+	if ((sphere[2] > AABB[5]) && (sphere[2] - AABB[5]) < 0.5) return 5;
+	
+	return 0;
+}
+//sphere[3]
 
 
 window.onload = function init() {
@@ -582,7 +597,7 @@ var dyingCubes = [];
 
 var render = function(){
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-	
+	//BV = 0;
 	var index = 3;
 
     // Configure Projection Matrix
@@ -655,8 +670,11 @@ var render = function(){
 				
 				// We add a bounding volume for every brick that we draw.
 				// These bounding volumes are contained in a list of lists.
-				BV[index] = [cur.pos[0] - cube1.scale[0]/2, cur.pos[1] - cube1.scale[1]/2, cur.pos[2] - cube1.scale[2]/2,
-								cur.pos[0] + cube1.scale[0]/2, cur.pos[1] + cube1.scale[1]/2, cur.pos[2] + cube1.scale[2]/2];
+				if (updateBV == true) {
+					BV[index] = [cur.pos[0] - cube1.scale[0]/2, cur.pos[1] - cube1.scale[1]/2, cur.pos[2] - cube1.scale[2]/2,
+								cur.pos[0] + cube1.scale[0]/2, cur.pos[1] + cube1.scale[1]/2, cur.pos[2] + cube1.scale[2]/2,
+								i, j];
+				}
 				index += 1;
 				
                 break;
@@ -679,6 +697,7 @@ var render = function(){
         }
 		
     }
+	//updateBV = false;
 
 ///////////////////////////////////
 ///////////Drawing Pad/////////////
@@ -711,12 +730,37 @@ var render = function(){
 		moveR = false;
 	if (testSphere(BV[2], sphereBV))
 		moveD = true;
-	for (var t = 3; t < index; t++) {
-		if (testSphere(BV[t], sphereBV) && CDPause == 0) {
-			moveD = !moveD; // We change the state of the balls movement to bounce back.
-			CDPause = 3;
+	for (var t = 3; t < index-1; t++) {
+		if (CDPause == 0 && testSphere(BV[t], sphereBV)) {
+			switch (testSide(BV[t], sphereBV)) {
+				case 1:
+					moveR = false;
+					break;
+				case 2:
+					moveR = true;
+					break;
+				case 5:
+					moveD = true;
+					break;
+				case 6:
+					moveD = false;
+					break;
+				default:
+					//moveD = !moveD;
+					break;
+			}
+			//moveD = !moveD; // We change the state of the balls movement to bounce back.
+			curBoard[BV[t][6]][BV[t][7]] = 0;
+			popBV = true;
+			break;
+			//index -= 1;
+			//CDPause = 3;
 		}
 	}
+	if (testSphere(BV[index - 1], sphereBV))
+		moveD = false;
+	if (popBV == true)
+		BV.pop();
 	if (CDPause > 0)
 		CDPause -= 1;
 	if (moveD == true) {
@@ -725,9 +769,9 @@ var render = function(){
 		dz -= 0.5;
 	}
 	if (moveR == true) {
-		dx += 0.05;
+		dx += 0.08;
 	} else {
-		dx -= 0.05;
+		dx -= 0.08;
 	}
 	//dx += 0.0235;
 	sphereBV[0] = 0.0 + dx; // We have to update the BV every time we translate the sphere.
