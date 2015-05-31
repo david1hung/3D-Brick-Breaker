@@ -452,7 +452,7 @@ window.onload = function init() {
           resetBoard = true;
         }
 
-        console.log("Event");
+        //console.log("Event");
            
     });
 	
@@ -529,7 +529,7 @@ var cube13 = {'name':"dyingCubes", 'pos': [1.5,0,-5], 'scale':[1.9*0.3,0.95*0.3,
 var cube14 = {'name':"dyingCubes", 'pos': [1.5,0,-5], 'scale':[1.9*0.1,0.95*0.1,1.9*0.1], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
 var cube15 = {'name':"dyingCubes", 'pos': [1.5,0,-5], 'scale':[0,0,0], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
 
-var pad = {'name': "pad", 'pos': [0,0,8.5], 'scale':[4,0.7,0.5], 'texImage':"texImage1", 'angle':180, 'rotationSpeed':10, 'rotateAxis': [0,1,0]};
+var pad = {'name': "pad", 'pos': [0,0,8.5], 'scale':[4,0.7,0.5], 'texImage':"bricks", 'angle':180, 'rotationSpeed':10, 'rotateAxis': [0,1,0]};
 function getPad(){
   return pad;
 }
@@ -569,6 +569,9 @@ function initLevel(i)
       // Level 1
     case 1:
       board = board1;
+      cube1Texture = "metal";
+      cube2Texture = "brick";
+      cube3Texture = "metal2";
       break;
 
       // Level 2
@@ -577,6 +580,9 @@ function initLevel(i)
       break;
     default:
       board = board00;
+      cube1Texture = "metal";
+      cube2Texture = "brick";
+      cube3Texture = "metal2";
   }
 
     for (var i = 0; i < 10; i++)
@@ -590,10 +596,22 @@ function initLevel(i)
 
 // Returns Cube
 function getCube(i){
-    if (i==0) return cube1;
-    if (i==1) return cube2;
-    if (i==2) return cube3;
-    if (i==3) return cube4;
+  switch (i)
+  {
+    case 1: return cube1; 
+    case 2: return cube2; 
+    case 3: return cube3; 
+    case 4: return cube4; 
+    case 5: return cube5; 
+
+
+    case 10: case 20: return cube10; 
+    case 11: case 21: return cube11; 
+    case 12: case 22: return cube12; 
+    case 13: case 23: return cube13; 
+    case 14: case 24: return cube14;
+    case 15: case 25: return cube15; 
+  }
 
     if (i==10) return cube10;
     if (i==11) return cube11;
@@ -617,6 +635,48 @@ var posOffset = [{'x':offset, 'z':offset}, {'x':offset, 'z':-offset}, {'x':-offs
 var curLevel = 1;
 var curBoard = boardTemp;
 var resetBoard = true;
+var cube1Texture;
+var cube2Texture;
+var cube3Texture;
+
+
+
+var drawCubes = function (brickPos)
+{
+  var i, j;
+  var type;
+  for (var k = 0; k < brickPos.length; k++)
+    {
+      i = brickPos[k][0];
+      j = brickPos[k][1];
+      var cur;
+
+      // Get actual type if it's dying
+      type = curBoard[i][j];
+      cur = getCube(type);
+      cur.pos = getCubePos(i, j);
+
+
+      //console.log(pos[0] + ' ' + pos[1] + ' ' + pos[2]);
+      var modelTransform = mat4();
+      modelTransform = mult(modelTransform, translate(cur.pos));
+      modelTransform = mult(modelTransform, rotate(cur.angle, cur.rotateAxis));
+      modelTransform = mult(modelTransform, scale(cur.scale));
+      gl.uniformMatrix4fv(modelTransformLoc, false, flatten(modelTransform) );
+
+            // Put code here to Configure texture for current cube
+      gl.drawArrays( gl.TRIANGLES, 0, numVertices );
+
+    }
+}
+
+var setTexture = function(imageName)
+{
+    image = document.getElementById(imageName);  //texImage1 and texImage2 loaded by html.
+    configureTexture(image);
+    gl.bufferData( gl.ARRAY_BUFFER, flatten(texCoordsArray), gl.STATIC_DRAW );
+
+}
 
 
 var render = function(){
@@ -653,7 +713,7 @@ var render = function(){
 	
     var image;
     // initialize Wall
-    image = document.getElementById("texImage1");  //texImage1 and texImage2 loaded by html.
+    image = document.getElementById("stone");  //texImage1 and texImage2 loaded by html.
     configureTexture(image);
     gl.bufferData( gl.ARRAY_BUFFER, flatten(texCoordsArray2), gl.STATIC_DRAW );
 
@@ -676,11 +736,13 @@ var render = function(){
 
     // TODO: move this into the cubes building code for variable textures. 
     // Currently this sets all cubes as the same texture. 
-    image = document.getElementById("texImage2");  //texImage1 and texImage2 loaded by html.
-    configureTexture( image);
-    gl.bufferData( gl.ARRAY_BUFFER, flatten(texCoordsArray), gl.STATIC_DRAW );
-
-    var dyingCubes = [];
+    
+    var cube1Pos = [];
+    var cube2Pos = [];
+    var cube3Pos = [];
+    var cube4Pos = [];
+    var dyingCubes1 = [];
+    var dyingCubes2 = [];
 
     // Loop inside board to configure
     for (var i = 0; i < 10; i++)
@@ -694,6 +756,7 @@ var render = function(){
               case 1:
                 cur = cube1;
                 cur.pos = getCubePos(i,j);
+                cube1Pos.push([i,j]);
 				
 				// We add a bounding volume for every brick that we draw.
 				// These bounding volumes are contained in a list of lists.
@@ -703,98 +766,67 @@ var render = function(){
 								i, j];
 				}
 				index += 1;
-				
+
+            case 2:
+              cur = cube2;
+              cur.pos = getCubePos(i,j);
+              cube2Pos.push([i,j]);
+
+              if (updateBV == true) {
+          BV[index] = [cur.pos[0] - cube1.scale[0]/2, cur.pos[1] - cube1.scale[1]/2, cur.pos[2] - cube1.scale[2]/2,
+                cur.pos[0] + cube1.scale[0]/2, cur.pos[1] + cube1.scale[1]/2, cur.pos[2] + cube1.scale[2]/2,
+                i, j];
+        }
+        index += 1;
+        
+				      continue;
                 break;
               case 10:
-                 cur = getCube(10);
-                 cur.pos = getCubePos(i,j);
-                 curBoard[i][j]=11;
-                 break;
               case 11:
-                 cur = getCube(11);
-                 cur.pos = getCubePos(i,j);
-                 curBoard[i][j]=12;
-                break;
               case 12:
-                 cur = getCube(12);
-                 cur.pos = getCubePos(i,j);
-                 curBoard[i][j]=13;
-                break;
-
               case 13:
-                 cur = getCube(13);
-                 cur.pos = getCubePos(i,j);
-                 curBoard[i][j]=14;
-                break;
               case 14:
-                 cur = getCube(14);
-                 cur.pos = getCubePos(i,j);
-                 curBoard[i][j]=15;
-                break;
+                 dyingCubes1.push([i,j]);
+                 curBoard[i][j]++;
+                 break;
               case 15:
-                 cur = getCube(15);
-                 cur.pos = getCubePos(i,j);
                  curBoard[i][j]=0;
-                 continue;
-                  break;;
+                  break;
+
+
+              case 20:
+              case 21:
+              case 22:
+              case 23:
+              case 24:
+                 dyingCubes2.push([i,j]);
+                 curBoard[i][j]++;
+                 break;
+              case 25:
+                 curBoard[i][j]=0;
               default: // skip block and don't draw.
                 continue;
             }
-
-            var modelTransform = mat4();
-            modelTransform = mult(modelTransform, translate(cur.pos));
-            modelTransform = mult(modelTransform, rotate(cur.angle, cur.rotateAxis));
-            modelTransform = mult(modelTransform, scale(cur.scale));
-            gl.uniformMatrix4fv(modelTransformLoc, false, flatten(modelTransform) );
-
-            // Put code here to Configure texture for current cube
-
-
-            gl.drawArrays( gl.TRIANGLES, 0, numVertices );
-
-
         }
-		
     }
 	//updateBV = false;
+    
 
+    setTexture(cube1Texture);
+    drawCubes(cube1Pos);
+    drawCubes(dyingCubes1);
 
-
-    //console.log("length:" + dyingCubes.length);
-
-    /*
-    // Draw dead cubes
-    for (var i = 0; i < dyingCubes.length; i++)
-    {
-      var cur=dyingCubes[i];
-      console.log(cur.pos[0] + ' ' + cur.pos[1] + ' ' + cur.pos[2]);
-      cur.pos[1] = 0.5;
-      var pos;
-      
-      for (var k = 0; k < 4; k++)
-      {
-        pos = [cur.pos[0]+posOffset[k].x , cur.pos[1], cur.pos[2]+posOffset[k].z];
-
-        //console.log(pos[0] + ' ' + pos[1] + ' ' + pos[2]);
-        var modelTransform = mat4();
-        modelTransform = mult(modelTransform, translate(pos));
-        modelTransform = mult(modelTransform, rotate(cur.angle, cur.rotateAxis));
-        modelTransform = mult(modelTransform, scale(cur.scale));
-        gl.uniformMatrix4fv(modelTransformLoc, false, flatten(modelTransform) );
-
-              // Put code here to Configure texture for current cube
-        gl.drawArrays( gl.TRIANGLES, 0, numVertices );
-      }
-
-    }
-    */
-
+    setTexture(cube2Texture);
+    drawCubes(cube2Pos);
+    drawCubes(dyingCubes2);
 
 
 
 ///////////////////////////////////
 ///////////Drawing Pad/////////////
 ///////////////////////////////////
+
+  setTexture(pad.texImage);
 
   var modelTransform = mat4();
   if (padR == true)
@@ -843,7 +875,13 @@ var render = function(){
 					break;
 			}
 			//moveD = !moveD; // We change the state of the balls movement to bounce back.
-			curBoard[BV[t][6]][BV[t][7]] = 10;
+			var brickNum = curBoard[BV[t][6]][BV[t][7]];
+      console.log (brickNum);
+      if (brickNum == 1)
+        curBoard[BV[t][6]][BV[t][7]] = 10;
+      else if (brickNum == 2)
+        curBoard[BV[t][6]][BV[t][7]] = 20;
+
 			popBV = true;
 			break;
 			//index -= 1;
@@ -862,9 +900,12 @@ var render = function(){
 		dz -= 0.5;
 	}
 	if (moveR == true) {
-		dx += 0.08;
+		//dx += 0.08;
+    dx += 0.1;
 	} else {
-		dx -= 0.08;
+		//dx -= 0.08;
+    dx -= 0.1;
+
 	}
 	//dx += 0.0235;
 	sphereBV[0] = 0.0 + dx; // We have to update the BV every time we translate the sphere.
