@@ -15,6 +15,14 @@ var normalsArray = [];
 var texCoordsArray = [];
 var texCoordsArray2 = [];
 
+
+var cube1Pos = [];
+var cube2Pos = [];
+var cube3Pos = [];
+var cube4Pos = [];
+var dyingCubes1 = [];
+var dyingCubes2 = [];
+
 var sphereBV = [0.0,0.0,5.0,0.5];
 var BV = [];
 var updateBV = true;
@@ -737,12 +745,12 @@ var render = function(){
     // TODO: move this into the cubes building code for variable textures. 
     // Currently this sets all cubes as the same texture. 
     
-    var cube1Pos = [];
-    var cube2Pos = [];
-    var cube3Pos = [];
-    var cube4Pos = [];
-    var dyingCubes1 = [];
-    var dyingCubes2 = [];
+    cube1Pos.splice(0,cube1Pos.length);
+    cube2Pos.splice(0,cube2Pos.length);
+    cube3Pos.splice(0,cube3Pos.length);
+    cube4Pos.splice(0,cube4Pos.length);
+    dyingCubes1.splice(0,dyingCubes1.length);
+    dyingCubes2.splice(0,dyingCubes2.length);
 
     // Loop inside board to configure
     for (var i = 0; i < 10; i++)
