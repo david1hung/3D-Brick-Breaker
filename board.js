@@ -553,30 +553,39 @@ function initLevel(i)
 {
   // Board defintions is in levelDef.js
   console.log("Init Level:" + i);
+  var board;
   switch(i)
   {
     // Full board
     case -1:
-      curBoard = board11;
+      board = board11;
       break;
 
       // Empty board
     case 0:
-      curBoard = board00;
+      board = board00;
       break;
 
       // Level 1
     case 1:
-      curBoard = board1;
+      board = board1;
       break;
 
       // Level 2
     case 2:
-      curBoard = board2;
+      board = board2;
       break;
     default:
-      curBoard = board00;
+      board = board00;
   }
+
+    for (var i = 0; i < 10; i++)
+    {
+      for (var j = 0; j < 9; j++)
+      {
+          curBoard[i][j] = board[i][j];
+      }
+    }
 }
 
 // Returns Cube
@@ -606,7 +615,7 @@ var posOffset = [{'x':offset, 'z':offset}, {'x':offset, 'z':-offset}, {'x':-offs
 
 // level attributes
 var curLevel = 1;
-var curBoard; 
+var curBoard = boardTemp;
 var resetBoard = true;
 
 
@@ -725,7 +734,7 @@ var render = function(){
               case 15:
                  cur = getCube(15);
                  cur.pos = getCubePos(i,j);
-                 curBoard[i][j]=10;
+                 curBoard[i][j]=0;
                  continue;
                   break;;
               default: // skip block and don't draw.
@@ -834,7 +843,7 @@ var render = function(){
 					break;
 			}
 			//moveD = !moveD; // We change the state of the balls movement to bounce back.
-			curBoard[BV[t][6]][BV[t][7]] = 0;
+			curBoard[BV[t][6]][BV[t][7]] = 10;
 			popBV = true;
 			break;
 			//index -= 1;
