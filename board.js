@@ -734,6 +734,14 @@ var setTexture = function(imageName)
 
 }
 
+// Sound Definitions
+var sHitPad = new Audio("sounds/ballhitsPaddle.wav"); // buffers automatically when created
+var sHitBrick = new Audio("sounds/metalbreak.wav");
+var sHitMetal = new Audio("sounds/metalbreak.wav");
+var sHitWall = new Audio("sounds/ballhitswall.wav");
+var sLoseLife = new Audio("sounds/loselife.wav");
+
+
 
 var render = function(time){
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -790,11 +798,9 @@ var render = function(time){
     /////////////////////
     // Configure Cubes///
 
-    // TODO: move this into the cubes building code for variable textures. 
-    // Currently this sets all cubes as the same texture. 
     
     
-	cube1Pos.splice(0,cube1Pos.length);
+	  cube1Pos.splice(0,cube1Pos.length);
     cube2Pos.splice(0,cube2Pos.length);
     cube3Pos.splice(0,cube3Pos.length);
     cube4Pos.splice(0,cube4Pos.length);
@@ -839,6 +845,16 @@ var render = function(time){
         
 				      continue;
                 break;
+
+/*
+              case 4: // broken metal cube
+                 cur = cube1;
+                 cur.pos = getCubePos(i,j);
+                 cube4Pos.push([i,j]);
+
+                 break;
+                 */
+
               case 10:
               case 11:
               case 12:
@@ -862,6 +878,9 @@ var render = function(time){
                  break;
               case 25:
                  curBoard[i][j]=0;
+
+
+
               default: // skip block and don't draw.
                 continue;
             }
@@ -881,6 +900,10 @@ var render = function(time){
     drawCubes(cube2Pos);
     drawCubes(dyingCubes2);
 
+/*
+  gl.bindTexture(gl.TEXTURE_2D, textures[2]);
+    drawCubes(cube4Pos);
+    */
 
 
 ///////////////////////////////////
@@ -942,9 +965,15 @@ var render = function(time){
 			
       // What type of brick it hits reduces
       if (brickNum == 1)
-				curBoard[BV[t][6]][BV[t][7]] = 10;
+      {
+				curBoard[BV[t][6]][BV[t][7]] = 4;
+        sHitMetal.play();
+      }
 			else if (brickNum == 2)
+      {
 				curBoard[BV[t][6]][BV[t][7]] = 20;
+        sHitBrick.play();
+      }
 
 			popBV = true;
 			break;
