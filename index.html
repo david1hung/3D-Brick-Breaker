@@ -1,7 +1,31 @@
 <!DOCTYPE html>
 <html>
+<style>
 
+.container {
+    position: relative;
+    overflow: none;
+}
 
+@font-face {
+    font-family: arcade-classic;
+    src: url('fonts/arcade-classic.ttf');
+}
+
+@font-face {
+    font-family: joystix;
+    src: url('fonts/joystix.ttf');
+}
+
+#text {
+    background-color: transparent;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    z-index: 10;
+}
+
+</style>
 
 
 <script id="vertex-shader" type="x-shader/x-vertex">
@@ -54,9 +78,12 @@ main()
 
 
 <body>
-<canvas id="gl-canvas" width="960" height="540">
+<div class="container">
+<canvas id="gl-canvas" width="960" height="540"></canvas>
+<canvas id="text" width="960" height="540"></canvas>
 Oops ... your browser doesn't support the HTML5 canvas element
 </canvas>
+</div>
 <img id = "stone" src = "./pictures/stone.jpg" hidden></img>
 <img id = "bricks" src = "./pictures/bricks.jpg" hidden></img>
 

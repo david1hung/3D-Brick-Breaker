@@ -3,6 +3,9 @@
 var canvas;
 var gl;
 
+var textCanvas, ctx;
+
+
 var numVertices  = 36;
 
 var texSize = 64;
@@ -289,10 +292,12 @@ function testSide( AABB, sphere) {
 }
 
 
-
 window.onload = function init() {
 
     canvas = document.getElementById( "gl-canvas" );
+
+    textCanvas = document.getElementById("text");
+    ctx = textCanvas.getContext("2d");
     
     gl = WebGLUtils.setupWebGL( canvas );
     if ( !gl ) { alert( "WebGL isn't available" ); }
@@ -708,6 +713,7 @@ var setTexture = function(imageName)
 
 var render = function(){
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 	var index = 3;
 
     // Configure Projection Matrix
@@ -928,22 +934,10 @@ var render = function(){
 	if (start == true) {
 		if (testSphere(BV[index - 1], sphereBV)) {
 			moveD = false;
-			if (padR) {
-				if (angle == 0.0)
-					moveR = true;
-				if (moveR)
-					angle += 0.05;
-				else
-					angle -= 0.05;
-			}
-			if (padL) {
-				if (angle == 0.0)
-					moveR = false;
-				if (moveR)
-					angle -= 0.05;
-				else
-					angle += 0.05;
-			}
+			if (padR)
+				angle += 0.05;
+			if (padL)
+				angle += 0.05;
 		}
 		if (popBV == true)
 			BV.pop();
@@ -989,6 +983,16 @@ var render = function(){
 
     //rotate cube
     rotateCube();
+
+    ctx.fillText("LEVEL:2", 800, 30);
+    ctx.fillText("LIVES:3", 800, 60);
+    ctx.fillText("SCORE:10", 800, 90)
+    ctx.font = '20px joystix';
+
+
+    
+    ctx.fillStyle = 'rgba(255,255,255,255)';
+
 
     requestAnimFrame(render);
 }
