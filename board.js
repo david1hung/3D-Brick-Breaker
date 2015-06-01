@@ -1086,11 +1086,13 @@ var render = function(time){
      start = false;
      isAlive = true;
 
+
      dx = 0;
      dy = 0; 
      dz = 0;
      angle = angleInit;
      pad.pos[0] = 0;
+     sphereBV = [0.0,0.0,7.0,0.5];
      curLife--;
   }
 
@@ -1102,6 +1104,8 @@ var render = function(time){
     rotateCube();
 
     var seconds = time * 0.0015;
+
+    curScore
 
     ctx.font = '20px joystix';
     ctx.fillText("LEVEL:"+ curLevel, 10, 30);
