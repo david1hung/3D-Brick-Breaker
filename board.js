@@ -44,6 +44,7 @@ var padR = false;
 var padL = false;
 var popBV = false;
 var start = false;
+var firstStart = false;
 
 var texture;
 var image;
@@ -474,6 +475,7 @@ window.onload = function init() {
 		else if (event.keyCode == 32)
 		{
 			start = true;
+      firstStart = true;
 		}
 
         //console.log("Event");
@@ -994,7 +996,7 @@ var render = function(time){
     if (Math.floor(seconds) % 2 === 0 && !start)
     {
       ctx.font = '20px joystix';
-      ctx.fillText("Press the space bar to start game.", 210, 270); 
+      ctx.fillText("Press the space bar to start game.", 203, 270); 
 
     }
 
