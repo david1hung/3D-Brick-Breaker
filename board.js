@@ -604,6 +604,7 @@ function initLevel(i)
   // Board defintions is in levelDef.js
   console.log("Init Level:" + i);
   numBricks = 0;
+  console.log(numBricks);
   var board;
   switch(i)
   {
@@ -645,6 +646,8 @@ function initLevel(i)
             numBricks ++;
       }
     }
+
+  console.log("NumBricks:" + numBricks);
 }
 
 // Returns Cube
@@ -666,12 +669,6 @@ function getCube(i){
     case 15: case 25: return cube15; 
   }
 
-    if (i==10) return cube10;
-    if (i==11) return cube11;
-    if (i==12) return cube12;
-    if (i==13) return cube13;
-    if (i==14) return cube14;
-    if (i==15) return cube15;
 }
 
 // Returns Wall
@@ -877,6 +874,7 @@ var render = function(time){
                 curBoard[i][j]=0;
                 curScore += 100;
                 numBricks--;
+                console.log(numBricks);
                 break;
 
 
@@ -892,8 +890,8 @@ var render = function(time){
                  curBoard[i][j]=0;
                  curScore += 100;
                  numBricks--;
-
-
+                 console.log(numBricks);
+                 break;
 
               default: // skip block and don't draw.
                 continue;
@@ -977,11 +975,11 @@ var render = function(time){
 			}
 			//moveD = !moveD; // We change the state of the balls movement to bounce back.
 			var brickNum = curBoard[BV[t][6]][BV[t][7]];
-			//console.log (brickNum);
+			console.log (brickNum);
 			// What type of brick it hits reduces
 		  if (brickNum == 1)
 		  {
-					curBoard[BV[t][6]][BV[t][7]] = 4;
+					curBoard[BV[t][6]][BV[t][7]] = 10;
 			sHitMetal.play();
 		  }
 				else if (brickNum == 2)
@@ -1054,9 +1052,14 @@ var render = function(time){
 
   if (numBricks == 0)
   {
+      console.log("Level:" + curLevel + "Complete");
       curLevel++;
       animateWall = true;
       numBricks = -10;
+      dx = 0;
+      dy = 0; 
+      dz = 0;
+      angle = angleInit;
       isAlive = false;
       curLife++;
   }
