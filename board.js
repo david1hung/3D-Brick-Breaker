@@ -623,6 +623,9 @@ function initLevel(i)
 {
   // Board defintions is in levelDef.js
   console.log("Init Level:" + i);
+  numBricks = 0;
+  console.log(numBricks);
+
   var board;
   switch(i)
   {
@@ -649,7 +652,7 @@ function initLevel(i)
       board = board2;
       break;
     default:
-      board = board00;
+      board = board11;
       cube1Texture = "metal";
       cube2Texture = "brick";
       cube3Texture = "metal2";
@@ -660,8 +663,12 @@ function initLevel(i)
       for (var j = 0; j < 9; j++)
       {
           curBoard[i][j] = board[i][j];
+          if (board[i][j] > 0)
+            numBricks++;
       }
     }
+
+  console.log("NumBricks:" + numBricks);
 }
 
 // Returns Cube
@@ -683,12 +690,6 @@ function getCube(i){
     case 15: case 25: return cube15; 
   }
 
-    if (i==10) return cube10;
-    if (i==11) return cube11;
-    if (i==12) return cube12;
-    if (i==13) return cube13;
-    if (i==14) return cube14;
-    if (i==15) return cube15;
 }
 
 // Returns Wall
@@ -708,6 +709,7 @@ var resetBoard = true;
 var curLife = 10;
 var curScore = 0;
 var isAlive = true;
+var numBricks = 0;
 
 
 var cube1Texture;
@@ -893,6 +895,8 @@ var render = function(time){
               case 15:
                 curBoard[i][j]=0;
                 curScore += 100;
+                numBricks--;
+                console.log(numBricks);
                 break;
 
 
@@ -907,8 +911,9 @@ var render = function(time){
               case 25:
                  curBoard[i][j]=0;
                  curScore += 100;
-
-
+                 numBricks--;
+                 console.log(numBricks);
+                 break;
 
               default: // skip block and don't draw.
                 continue;
@@ -999,7 +1004,7 @@ var render = function(time){
 			// What type of brick it hits reduces
 		  if (brickNum == 1)
 		  {
-					curBoard[BV[t][6]][BV[t][7]] = 4;
+					curBoard[BV[t][6]][BV[t][7]] = 10;
 			sHitMetal.play();
 		  }
 				else if (brickNum == 2)
@@ -1069,6 +1074,24 @@ var render = function(time){
 	gl.uniform1i(drawingSphere, true);
     gl.drawArrays( gl.TRIANGLES, numVertices, triIndex );
 	
+  if (numBricks == 0)
+  {
+      console.log("Level:" + curLevel + "Complete");
+      curLevel++;
+      animateWall = true;
+      numBricks = -10;
+      dx = 0;
+      dy = 0; 
+      dz = 0;
+      angle = angleInit;
+      isAlive = false;
+      curLife++;
+  }
+
+  if (!animateWall && numBricks == -10)
+  {
+    initLevel(curLevel);
+  }
 
     // If ball is dead, move it back to 0. 
   if (isAlive == false)
