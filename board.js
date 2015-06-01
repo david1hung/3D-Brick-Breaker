@@ -406,7 +406,7 @@ window.onload = function init() {
         else if (event.keyCode == 82) {
           // r kill cube
 
-          isAlive = false;
+          //isAlive = false;
 
           /*
           // r to pause animation
@@ -918,9 +918,9 @@ var render = function(time){
 	gl.bindTexture(gl.TEXTURE_2D, textures[3]);
   
   var modelTransform = mat4();
-  if (padR == true)
+  if (padR == true && pad.pos[0] < 11.2)
 	  pad.pos[0] += 0.25;
-  if (padL == true)
+  if (padL == true && pad.pos[0] > -11.2)
 	  pad.pos[0] -= 0.25;
   modelTransform = mult(modelTransform, translate(pad.pos));
   modelTransform = mult(modelTransform, rotate(pad.angle, pad.rotateAxis));
@@ -1070,7 +1070,7 @@ var render = function(time){
     ctx.fillText("LIVES:"+curLife, 10, 60);
     ctx.fillText("SCORE:"+curScore, 10, 90)
 
-    if (Math.floor(seconds) % 2 === 0 && !firstStart && (time > 3300))
+    if (Math.floor(seconds) % 2 === 0 && !firstStart && (time > 3400))
     {
       ctx.font = '20px joystix';
       ctx.fillText("Press the space bar to start game.", 203, 270); 
