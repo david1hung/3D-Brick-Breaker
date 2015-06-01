@@ -982,12 +982,23 @@ var render = function(time){
 	}
 	if (start == true) {
 		if (testSphere(BV[index - 1], sphereBV)) {
-			moveD = false;
-			if (padR)
-				angle += 0.05;
-			if (padL)
-				angle += 0.05;
-		}
+ 			moveD = false;
+			if (padR) {
+				if (angle == 0.0)
+					moveR = true;
+				if (moveR)
+					angle += 0.05;
+				else
+					angle -= 0.05;
+			}
+			if (padL) {
+				if (angle == 0.0)		
+					moveR = false;	
+				if (moveR)
+					angle -= 0.05;	
+				else
+					angle += 0.05;	
+			}
 		if (popBV == true)
 			BV.pop();
 		if (CDPause > 0)
@@ -1008,7 +1019,7 @@ var render = function(time){
 		//dx += 0.0235;
 		sphereBV[0] = 0.0 + dx; // We have to update the BV every time we translate the sphere.
 		sphereBV[1] = 0.0 + dy; // So we have these statements that add d_ to the initial position of the sphere.
-		sphereBV[2] = 7.0 + dz; // This one is 5.0 because the initial z value of the sphere is 5.0
+		sphereBV[2] = 7.0 + dz; // This one is 7.0 because the initial z value of the sphere is 7.0
 	}
 	
 	
