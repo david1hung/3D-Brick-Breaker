@@ -900,7 +900,7 @@ var render = function(time){
                 curBoard[i][j]=0;
                 curScore += 100;
                 numBricks--;
-                console.log(numBricks);
+                //console.log(numBricks);
                 break;
 
 
@@ -916,18 +916,11 @@ var render = function(time){
                  curBoard[i][j]=0;
                  curScore += 100;
                  numBricks--;
-                 console.log(numBricks);
+                 //console.log(numBricks);
                  break;
 
+
               case 30:
-              case 31:
-              case 32:
-              case 33:
-              case 34:
-                 dyingCubes3.push([i,j]);
-                 curBoard[i][j]++;
-                 break;
-              case 35:
                  curBoard[i][j]=0;
                  curScore += 100;
                  numBricks--;
@@ -1032,6 +1025,12 @@ var render = function(time){
 					curBoard[BV[t][6]][BV[t][7]] = 20;
 			sHitBrick.play();
 		  }
+
+      else if (brickNum == 3)
+      {
+          curBoard[BV[t][6]][BV[t][7]] = 30;
+      sHitBrick.play();
+      }
 
 			popBV = true;
 			break;
@@ -1138,7 +1137,7 @@ var render = function(time){
 
     var seconds = time * 0.0015;
 
-    curScore
+    //curScore
 
     ctx.font = '20px joystix';
     ctx.fillText("LEVEL:"+ curLevel, 10, 30);
