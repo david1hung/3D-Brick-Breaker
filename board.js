@@ -509,7 +509,7 @@ window.onload = function init() {
 	configureTexture(image);
 	image = document.getElementById(pad.texImage);
 	configureTexture(image);
-    render();
+    requestAnimFrame(render);
  
 }
 
@@ -711,7 +711,7 @@ var setTexture = function(imageName)
 }
 
 
-var render = function(){
+var render = function(time){
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 	var index = 3;
@@ -874,9 +874,9 @@ var render = function(){
   
   var modelTransform = mat4();
   if (padR == true)
-	  pad.pos[0] += 0.3;
+	  pad.pos[0] += 0.5;
   if (padL == true)
-	  pad.pos[0] -= 0.3;
+	  pad.pos[0] -= 0.5;
   modelTransform = mult(modelTransform, translate(pad.pos));
   modelTransform = mult(modelTransform, rotate(pad.angle, pad.rotateAxis));
   modelTransform = mult(modelTransform, scale(pad.scale));
@@ -984,10 +984,21 @@ var render = function(){
     //rotate cube
     rotateCube();
 
+    var seconds = time * 0.0015;
+
+    ctx.font = '20px joystix';
     ctx.fillText("LEVEL:2", 800, 30);
     ctx.fillText("LIVES:3", 800, 60);
     ctx.fillText("SCORE:10", 800, 90)
-    ctx.font = '20px joystix';
+
+    if (Math.floor(seconds) % 2 === 0 && !start)
+    {
+      ctx.font = '20px joystix';
+      ctx.fillText("Press the spacebar to start game.", 210, 270); 
+
+    }
+
+    
 
 
     
