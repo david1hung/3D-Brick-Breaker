@@ -39,9 +39,9 @@ function spinWall(){
              // use time to calculate real-time displacement
             delta = currentTime - wallUpdateTime;
 
-            wall1.angle += 180*(delta/2000.0);  
-            wall2.angle += 180*(delta/2000.0);  
-            wall3.angle += 180*(delta/2000.0); 
+            wall1.angle += 360*(delta/2000.0);  
+            wall2.angle += 360*(delta/2000.0);  
+            wall3.angle += 360*(delta/2000.0); 
 
             wallUpdateTime = currentTime; // update time
         }
