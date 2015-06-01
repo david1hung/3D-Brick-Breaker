@@ -953,12 +953,23 @@ var render = function(time){
 	}
 	if (start == true) {
 		if (testSphere(BV[index - 1], sphereBV)) {
-			moveD = false;
-			if (padR)
-				angle += 0.05;
-			if (padL)
-				angle += 0.05;
-		}
+ 			moveD = false;
+			if (padR) {
+				if (angle == 0.0)
+					moveR = true;
+				if (moveR)
+					angle += 0.05;
+				else
+					angle -= 0.05;
+			}
+			if (padL) {
+				if (angle == 0.0)		
+					moveR = false;	
+				if (moveR)
+					angle -= 0.05;	
+				else
+					angle += 0.05;	
+			}
 		if (popBV == true)
 			BV.pop();
 		if (CDPause > 0)
