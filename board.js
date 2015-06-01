@@ -58,17 +58,17 @@ var texCoord = [
     vec2(0, 1),
     vec2(1, 1),
     vec2(1, 0), 
-
+/*
     vec2(0, 0),
     vec2(0, 1),
     vec2(1, 1),
     vec2(1, 0),
-/*
+*/
     vec2(0, 0),
     vec2(0, 2),
     vec2(16, 2),
     vec2(16, 0)
-    */
+    
 
 ];
 
@@ -555,7 +555,7 @@ window.onload = function init() {
   image = document.getElementById("ice");
   configureTexture(image);
   // texture [5] // wall
-  image = document.getElementById("arenaWall");
+  image = document.getElementById("stone");
   configureTexture(image);
 
     requestAnimFrame(render);
@@ -610,7 +610,7 @@ var cube13 = {'name':"dyingCubes", 'pos': [1.5,0,-5], 'scale':[1.9*0.3,0.95*0.3,
 var cube14 = {'name':"dyingCubes", 'pos': [1.5,0,-5], 'scale':[1.9*0.1,0.95*0.1,1.9*0.1], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
 var cube15 = {'name':"dyingCubes", 'pos': [1.5,0,-5], 'scale':[0,0,0], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
 
-var pad = {'name': "pad", 'pos': [0,0,8.5], 'scale':[4,0.7,0.5], 'texImage':"paddle2", 'angle':180, 'rotationSpeed':10, 'rotateAxis': [0,1,0]};
+var pad = {'name': "pad", 'pos': [0,0,8.5], 'scale':[4,0.7,0.5], 'texImage':"arenaWall", 'angle':180, 'rotationSpeed':10, 'rotateAxis': [0,1,0]};
 function getPad(){
   return pad;
 }
