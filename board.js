@@ -746,7 +746,7 @@ var sLoseLife = new Audio("sounds/loselife.wav");
 var render = function(time){
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-	var index = 3;
+	var index = 4;
 
     // Configure Projection Matrix
     var projectionMatrix = perspective(fovy, aspect, near, far);
@@ -800,7 +800,7 @@ var render = function(time){
 
     
     
-	  cube1Pos.splice(0,cube1Pos.length);
+	cube1Pos.splice(0,cube1Pos.length);
     cube2Pos.splice(0,cube2Pos.length);
     cube3Pos.splice(0,cube3Pos.length);
     cube4Pos.splice(0,cube4Pos.length);
@@ -940,6 +940,8 @@ var render = function(time){
 		moveR = false;
 	if (testSphere(BV[2], sphereBV))
 		moveD = true;
+	if (dz > 10)
+		isAlive = false;
 	for (var t = 3; t < index-1; t++) {
 		if (CDPause == 0 && testSphere(BV[t], sphereBV)) {
 			switch (testSide(BV[t], sphereBV)) {
@@ -998,6 +1000,7 @@ var render = function(time){
 				else
 					angle += 0.05;	
 			}
+			sHitPad.play();
 		}
 		if (popBV == true)
 			BV.pop();
