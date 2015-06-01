@@ -928,10 +928,16 @@ var render = function(){
 	if (start == true) {
 		if (testSphere(BV[index - 1], sphereBV)) {
 			moveD = false;
-			if (padR)
+			if (padR) {
+				if (angle == 0.0)
+					moveR = true;
 				angle += 0.05;
-			if (padL)
+			}
+			if (padL) {
+				if (angle == 0.0)
+					moveR = false;
 				angle += 0.05;
+			}
 		}
 		if (popBV == true)
 			BV.pop();
