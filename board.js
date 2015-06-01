@@ -1064,7 +1064,7 @@ var render = function(time){
     ctx.fillText("LIVES:"+curLife, 800, 60);
     ctx.fillText("SCORE:"+curScore, 800, 90)
 
-    if (Math.floor(seconds) % 2 === 0 && !start)
+    if (Math.floor(seconds) % 2 === 0 && !firstStart)
     {
       ctx.font = '20px joystix';
       ctx.fillText("Press the space bar to start game.", 203, 270); 
