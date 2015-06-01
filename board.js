@@ -931,12 +931,18 @@ var render = function(){
 			if (padR) {
 				if (angle == 0.0)
 					moveR = true;
-				angle += 0.05;
+				if (moveR)
+					angle += 0.05;
+				else
+					angle -= 0.05;
 			}
 			if (padL) {
 				if (angle == 0.0)
 					moveR = false;
-				angle += 0.05;
+				if (moveR)
+					angle -= 0.05;
+				else
+					angle += 0.05;
 			}
 		}
 		if (popBV == true)
