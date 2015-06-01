@@ -965,7 +965,7 @@ var render = function(){
 		//dx += 0.0235;
 		sphereBV[0] = 0.0 + dx; // We have to update the BV every time we translate the sphere.
 		sphereBV[1] = 0.0 + dy; // So we have these statements that add d_ to the initial position of the sphere.
-		sphereBV[2] = 7.0 + dz; // This one is 5.0 because the initial z value of the sphere is 5.0
+		sphereBV[2] = 7.0 + dz; // This one is 7.0 because the initial z value of the sphere is 7.0
 	}
 	
 	
