@@ -59,11 +59,16 @@ var texCoord = [
     vec2(1, 1),
     vec2(1, 0), 
 
-
+    vec2(0, 0),
+    vec2(0, 1),
+    vec2(1, 1),
+    vec2(1, 0),
+/*
     vec2(0, 0),
     vec2(0, 2),
     vec2(16, 2),
     vec2(16, 0)
+    */
 
 ];
 
@@ -534,15 +539,23 @@ window.onload = function init() {
 	BV[2] = [wall3.pos[0] - wall3.scale[0]/2, wall3.pos[1] - wall3.scale[1]/2, wall3.pos[2] - wall3.scale[2]/2,
 				wall3.pos[0] + wall3.scale[0]/2, wall3.pos[1] + wall3.scale[1]/2, wall3.pos[2] + wall3.scale[2]/2];
 	
+  // 0
 	image = document.getElementById("stone");
 	configureTexture(image);
+  // 1
 	image = document.getElementById("metal");
 	configureTexture(image);
+  // texture[2]
 	image = document.getElementById("brick");
 	configureTexture(image);
+  // texture[3]
 	image = document.getElementById(pad.texImage);
 	configureTexture(image);
+  // texture [4]
   image = document.getElementById("ice");
+  configureTexture(image);
+  // texture [5] // wall
+  image = document.getElementById("arenaWall");
   configureTexture(image);
 
     requestAnimFrame(render);
@@ -597,7 +610,7 @@ var cube13 = {'name':"dyingCubes", 'pos': [1.5,0,-5], 'scale':[1.9*0.3,0.95*0.3,
 var cube14 = {'name':"dyingCubes", 'pos': [1.5,0,-5], 'scale':[1.9*0.1,0.95*0.1,1.9*0.1], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
 var cube15 = {'name':"dyingCubes", 'pos': [1.5,0,-5], 'scale':[0,0,0], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
 
-var pad = {'name': "pad", 'pos': [0,0,8.5], 'scale':[4,0.7,0.5], 'texImage':"bricks", 'angle':180, 'rotationSpeed':10, 'rotateAxis': [0,1,0]};
+var pad = {'name': "pad", 'pos': [0,0,8.5], 'scale':[4,0.7,0.5], 'texImage':"paddle2", 'angle':180, 'rotationSpeed':10, 'rotateAxis': [0,1,0]};
 function getPad(){
   return pad;
 }
@@ -801,7 +814,7 @@ var render = function(time){
     // initialize Wall
     //image = document.getElementById("stone");  //texImage1 and texImage2 loaded by html.
     //configureTexture(image);
-	gl.bindTexture(gl.TEXTURE_2D, textures[0]);
+	gl.bindTexture(gl.TEXTURE_2D, textures[5]);
     gl.bufferData( gl.ARRAY_BUFFER, flatten(texCoordsArray2), gl.STATIC_DRAW );
 
     for (var i = 0; i < 3; i++)
