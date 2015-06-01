@@ -27,6 +27,7 @@ var cube3Pos = [];
 var cube4Pos = [];
 var dyingCubes1 = [];
 var dyingCubes2 = [];
+var dyingCubes3 = [];
 
 var sphereBV = [0.0,0.0,7.0,0.5];
 var BV = [];
@@ -468,6 +469,13 @@ window.onload = function init() {
           resetBoard = true;
         }
 
+        // key 3 for level 3
+        else if (event.keyCode == 51)
+        {
+          curLevel=3;
+          resetBoard = true;
+        }
+
         // Key '9' fills board
         else if (event.keyCode == 57)
         {
@@ -534,6 +542,9 @@ window.onload = function init() {
 	configureTexture(image);
 	image = document.getElementById(pad.texImage);
 	configureTexture(image);
+  image = document.getElementById("ice");
+  configureTexture(image);
+
     requestAnimFrame(render);
  
 }
@@ -629,20 +640,18 @@ function initLevel(i)
       // Level 1
     case 1:
       board = board1;
-      cube1Texture = "metal";
-      cube2Texture = "brick";
-      cube3Texture = "metal2";
       break;
 
       // Level 2
     case 2:
       board = board2;
       break;
+
+    case 3:
+      board = board3;
+      break;
     default:
       board = board11;
-      cube1Texture = "metal";
-      cube2Texture = "brick";
-      cube3Texture = "metal2";
   }
 
     for (var i = 0; i < 10; i++)
@@ -698,10 +707,6 @@ var curScore = 0;
 var isAlive = true;
 var numBricks = 0;
 
-
-var cube1Texture;
-var cube2Texture;
-var cube3Texture;
 
 
 
@@ -817,14 +822,13 @@ var render = function(time){
     // Configure Cubes///
 
     
-    
 	  cube1Pos.splice(0,cube1Pos.length);
     cube2Pos.splice(0,cube2Pos.length);
     cube3Pos.splice(0,cube3Pos.length);
     cube4Pos.splice(0,cube4Pos.length);
     dyingCubes1.splice(0,dyingCubes1.length);
     dyingCubes2.splice(0,dyingCubes2.length);
-
+    dyingCubes3.splice(0,dyingCubes3.length);
 
     // Loop inside board to configure
     for (var i = 0; i < 10; i++)
@@ -863,7 +867,20 @@ var render = function(time){
         
                 break;
 
-/*
+
+            case 3:
+              cur = cube2;
+              cur.pos = getCubePos(i,j);
+              cube3Pos.push([i,j]);
+
+              if (updateBV == true) {
+                BV[index] = [cur.pos[0] - cube1.scale[0]/2, cur.pos[1] - cube1.scale[1]/2, cur.pos[2] - cube1.scale[2]/2,
+                cur.pos[0] + cube1.scale[0]/2, cur.pos[1] + cube1.scale[1]/2, cur.pos[2] + cube1.scale[2]/2,
+                i, j];
+              }
+              index += 1;
+              break;
+/*          
               case 4: // broken metal cube
                  cur = cube1;
                  cur.pos = getCubePos(i,j);
@@ -902,6 +919,21 @@ var render = function(time){
                  console.log(numBricks);
                  break;
 
+              case 30:
+              case 31:
+              case 32:
+              case 33:
+              case 34:
+                 dyingCubes3.push([i,j]);
+                 curBoard[i][j]++;
+                 break;
+              case 35:
+                 curBoard[i][j]=0;
+                 curScore += 100;
+                 numBricks--;
+                 console.log(numBricks);
+                 break;
+
               default: // skip block and don't draw.
                 continue;
             }
@@ -910,7 +942,7 @@ var render = function(time){
 	//updateBV = false;
     
 
-    //setTexture(cube1Texture);
+    //setTexture
 	gl.bindTexture(gl.TEXTURE_2D, textures[1]);
 	gl.bufferData( gl.ARRAY_BUFFER, flatten(texCoordsArray), gl.STATIC_DRAW );
     drawCubes(cube1Pos);
@@ -921,10 +953,11 @@ var render = function(time){
     drawCubes(cube2Pos);
     drawCubes(dyingCubes2);
 
-/*
-  gl.bindTexture(gl.TEXTURE_2D, textures[2]);
-    drawCubes(cube4Pos);
-    */
+
+  gl.bindTexture(gl.TEXTURE_2D, textures[4]);
+    drawCubes(cube3Pos);
+    drawCubes(dyingCubes3);
+    
 
 
 ///////////////////////////////////
