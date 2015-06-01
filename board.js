@@ -12,6 +12,7 @@ var program;
 var pointsArray = [];
 var colorsArray = [];
 var normalsArray = [];
+var textures = [];
 var texCoordsArray = [];
 var texCoordsArray2 = [];
 
@@ -39,6 +40,7 @@ var padL = false;
 var popBV = false;
 
 var texture;
+var image;
 
 var texCoord = [
     vec2(0, 0),
@@ -129,7 +131,9 @@ function configureTexture(image) {
     gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST );
       
     
-    gl.uniform1i(gl.getUniformLocation(program, "texture"), 0);
+    //gl.uniform1i(gl.getUniformLocation(program, "texture"), 0);
+	textures.push(texture);
+	gl.bindTexture(gl.TEXTURE_2D, null);
 }
 
 
@@ -484,7 +488,15 @@ window.onload = function init() {
 				wall2.pos[0] + wall2.scale[0]/2, wall2.pos[1] + wall2.scale[1]/2, wall2.pos[2] + wall2.scale[2]/2];
 	BV[2] = [wall3.pos[0] - wall3.scale[0]/2, wall3.pos[1] - wall3.scale[1]/2, wall3.pos[2] - wall3.scale[2]/2,
 				wall3.pos[0] + wall3.scale[0]/2, wall3.pos[1] + wall3.scale[1]/2, wall3.pos[2] + wall3.scale[2]/2];
-
+	
+	image = document.getElementById("stone");
+	configureTexture(image);
+	image = document.getElementById("metal");
+	configureTexture(image);
+	image = document.getElementById("brick");
+	configureTexture(image);
+	image = document.getElementById(pad.texImage);
+	configureTexture(image);
     render();
  
 }
@@ -680,8 +692,8 @@ var drawCubes = function (brickPos)
 
 var setTexture = function(imageName)
 {
-    image = document.getElementById(imageName);  //texImage1 and texImage2 loaded by html.
-    configureTexture(image);
+    //image = document.getElementById(imageName);  //texImage1 and texImage2 loaded by html.
+    //configureTexture(image);
     gl.bufferData( gl.ARRAY_BUFFER, flatten(texCoordsArray), gl.STATIC_DRAW );
 
 }
@@ -689,7 +701,6 @@ var setTexture = function(imageName)
 
 var render = function(){
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-	//BV = 0;
 	var index = 3;
 
     // Configure Projection Matrix
@@ -719,10 +730,10 @@ var render = function(){
 	
 	
 	
-    var image;
     // initialize Wall
-    image = document.getElementById("stone");  //texImage1 and texImage2 loaded by html.
-    configureTexture(image);
+    //image = document.getElementById("stone");  //texImage1 and texImage2 loaded by html.
+    //configureTexture(image);
+	gl.bindTexture(gl.TEXTURE_2D, textures[0]);
     gl.bufferData( gl.ARRAY_BUFFER, flatten(texCoordsArray2), gl.STATIC_DRAW );
 
     for (var i = 0; i < 3; i++)
@@ -745,13 +756,21 @@ var render = function(){
     // TODO: move this into the cubes building code for variable textures. 
     // Currently this sets all cubes as the same texture. 
     
-    cube1Pos.splice(0,cube1Pos.length);
+    
+	cube1Pos.splice(0,cube1Pos.length);
     cube2Pos.splice(0,cube2Pos.length);
     cube3Pos.splice(0,cube3Pos.length);
     cube4Pos.splice(0,cube4Pos.length);
     dyingCubes1.splice(0,dyingCubes1.length);
     dyingCubes2.splice(0,dyingCubes2.length);
-
+	/*
+	cube1Pos.length = 0;
+    cube2Pos.length = 0;
+    cube3Pos.length = 0;
+    cube4Pos.length = 0;
+    dyingCubes1.length = 0;
+    dyingCubes2.length = 0;
+	*/
     // Loop inside board to configure
     for (var i = 0; i < 10; i++)
     {
@@ -820,11 +839,14 @@ var render = function(){
 	//updateBV = false;
     
 
-    setTexture(cube1Texture);
+    //setTexture(cube1Texture);
+	gl.bindTexture(gl.TEXTURE_2D, textures[1]);
+	gl.bufferData( gl.ARRAY_BUFFER, flatten(texCoordsArray), gl.STATIC_DRAW );
     drawCubes(cube1Pos);
     drawCubes(dyingCubes1);
 
-    setTexture(cube2Texture);
+    //setTexture(cube2Texture);
+	gl.bindTexture(gl.TEXTURE_2D, textures[2]);
     drawCubes(cube2Pos);
     drawCubes(dyingCubes2);
 
@@ -834,8 +856,9 @@ var render = function(){
 ///////////Drawing Pad/////////////
 ///////////////////////////////////
 
-  setTexture(pad.texImage);
-
+  //setTexture(pad.texImage);
+	gl.bindTexture(gl.TEXTURE_2D, textures[3]);
+  
   var modelTransform = mat4();
   if (padR == true)
 	  pad.pos[0] += 0.1;
@@ -884,15 +907,14 @@ var render = function(){
 			}
 			//moveD = !moveD; // We change the state of the balls movement to bounce back.
 			var brickNum = curBoard[BV[t][6]][BV[t][7]];
-      console.log (brickNum);
-      if (brickNum == 1)
-        curBoard[BV[t][6]][BV[t][7]] = 10;
-      else if (brickNum == 2)
-        curBoard[BV[t][6]][BV[t][7]] = 20;
+			console.log (brickNum);
+			if (brickNum == 1)
+				curBoard[BV[t][6]][BV[t][7]] = 10;
+			else if (brickNum == 2)
+				curBoard[BV[t][6]][BV[t][7]] = 20;
 
 			popBV = true;
 			break;
-			//index -= 1;
 			//CDPause = 3;
 		}
 	}
