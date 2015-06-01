@@ -24,7 +24,7 @@ var cube4Pos = [];
 var dyingCubes1 = [];
 var dyingCubes2 = [];
 
-var sphereBV = [0.0,0.0,5.0,0.5];
+var sphereBV = [0.0,0.0,7.0,0.5];
 var BV = [];
 var updateBV = true;
 var triIndex = 0;
@@ -35,9 +35,12 @@ var moveD = false;
 var moveR = true;
 var CDPause = 0;
 var px = 0.0;
+var angle = 0.0;
+var angleL = 0.0;
 var padR = false;
 var padL = false;
 var popBV = false;
+var start = false;
 
 var texture;
 var image;
@@ -275,16 +278,16 @@ function testSphere( AABB, sphere) {
 
 
 function testSide( AABB, sphere) {
-	if ((AABB[0] > sphere[0]) && (AABB[0] - sphere[0]) < 0.5) return 1;
-	if ((sphere[0] > AABB[3]) && (sphere[0] - AABB[3]) < 0.5) return 2;
+	if ((AABB[0] > sphere[0]) && (AABB[0] - sphere[0]) < 0.48) return 1;
+	if ((sphere[0] > AABB[3]) && (sphere[0] - AABB[3]) < 0.48) return 2;
 	//if (Math.abs(sphere[1] - AABB[1]) < sphere[3]) return 3;
 	//if (Math.abs(sphere[1] - AABB[4]) < sphere[3]) return 4;
-	if ((AABB[2] > sphere[2]) && (AABB[2] - sphere[2]) < 0.5) return 6;
-	if ((sphere[2] > AABB[5]) && (sphere[2] - AABB[5]) < 0.5) return 5;
+	if ((AABB[2] > sphere[2]) && (AABB[2] - sphere[2]) < 0.48) return 6;
+	if ((sphere[2] > AABB[5]) && (sphere[2] - AABB[5]) < 0.48) return 5;
 	
 	return 0;
 }
-//sphere[3]
+
 
 
 window.onload = function init() {
@@ -463,6 +466,10 @@ window.onload = function init() {
           curLevel=0;
           resetBoard = true;
         }
+		else if (event.keyCode == 32)
+		{
+			start = true;
+		}
 
         //console.log("Event");
            
@@ -861,9 +868,9 @@ var render = function(){
   
   var modelTransform = mat4();
   if (padR == true)
-	  pad.pos[0] += 0.1;
+	  pad.pos[0] += 0.3;
   if (padL == true)
-	  pad.pos[0] -= 0.1;
+	  pad.pos[0] -= 0.3;
   modelTransform = mult(modelTransform, translate(pad.pos));
   modelTransform = mult(modelTransform, rotate(pad.angle, pad.rotateAxis));
   modelTransform = mult(modelTransform, scale(pad.scale));
@@ -902,7 +909,7 @@ var render = function(){
 					moveD = false;
 					break;
 				default:
-					//moveD = !moveD;
+					moveD = !moveD;
 					break;
 			}
 			//moveD = !moveD; // We change the state of the balls movement to bounce back.
@@ -918,32 +925,39 @@ var render = function(){
 			//CDPause = 3;
 		}
 	}
-	if (testSphere(BV[index - 1], sphereBV))
-		moveD = false;
-	if (popBV == true)
-		BV.pop();
-	if (CDPause > 0)
-		CDPause -= 1;
-	if (moveD == true) {
-		dz += 0.5;
-	} else {
-		dz -= 0.5;
-	}
-	if (moveR == true) {
-		//dx += 0.08;
-    dx += 0.1;
-	} else {
-		//dx -= 0.08;
-    dx -= 0.1;
+	if (start == true) {
+		if (testSphere(BV[index - 1], sphereBV)) {
+			moveD = false;
+			if (padR)
+				angle += 0.05;
+			if (padL)
+				angle += 0.05;
+		}
+		if (popBV == true)
+			BV.pop();
+		if (CDPause > 0)
+			CDPause -= 1;
+		if (moveD == true) {
+			dz += 0.5;
+		} else {
+			dz -= 0.5;
+		}
+		if (moveR == true) {
+			//dx += 0.08;
+			dx += angle;
+		} else {
+			//dx -= 0.08;
+			dx -= angle;
 
+		}
+		//dx += 0.0235;
+		sphereBV[0] = 0.0 + dx; // We have to update the BV every time we translate the sphere.
+		sphereBV[1] = 0.0 + dy; // So we have these statements that add d_ to the initial position of the sphere.
+		sphereBV[2] = 7.0 + dz; // This one is 5.0 because the initial z value of the sphere is 5.0
 	}
-	//dx += 0.0235;
-	sphereBV[0] = 0.0 + dx; // We have to update the BV every time we translate the sphere.
-	sphereBV[1] = 0.0 + dy; // So we have these statements that add d_ to the initial position of the sphere.
-	sphereBV[2] = 5.0 + dz; // This one is 5.0 because the initial z value of the sphere is 5.0
 	
 	
-	modelTransform = mult(mat4(), translate(0,0,5));
+	modelTransform = mult(mat4(), translate(0,0,7));
 	modelTransform = mult(modelTransform, translate(dx,dy,dz));
 	modelTransform = mult(modelTransform, scale(0.51,0.51,0.51));
 	gl.uniformMatrix4fv(modelTransformLoc, false, flatten(modelTransform) );
@@ -959,7 +973,7 @@ var render = function(){
 
 
 
-	px += 0.01;
+	px += 0.1;
 
     //rotate cube
     rotateCube();
