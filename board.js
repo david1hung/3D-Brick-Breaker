@@ -962,18 +962,17 @@ var render = function(time){
 			//moveD = !moveD; // We change the state of the balls movement to bounce back.
 			var brickNum = curBoard[BV[t][6]][BV[t][7]];
 			//console.log (brickNum);
-			
-      // What type of brick it hits reduces
-      if (brickNum == 1)
-      {
-				curBoard[BV[t][6]][BV[t][7]] = 4;
-        sHitMetal.play();
-      }
-			else if (brickNum == 2)
-      {
-				curBoard[BV[t][6]][BV[t][7]] = 20;
-        sHitBrick.play();
-      }
+			// What type of brick it hits reduces
+		  if (brickNum == 1)
+		  {
+					curBoard[BV[t][6]][BV[t][7]] = 4;
+			sHitMetal.play();
+		  }
+				else if (brickNum == 2)
+		  {
+					curBoard[BV[t][6]][BV[t][7]] = 20;
+			sHitBrick.play();
+		  }
 
 			popBV = true;
 			break;
@@ -999,6 +998,7 @@ var render = function(time){
 				else
 					angle += 0.05;	
 			}
+		}
 		if (popBV == true)
 			BV.pop();
 		if (CDPause > 0)
@@ -1077,6 +1077,7 @@ var render = function(time){
 
 
     requestAnimFrame(render);
+	
 }
 
 
