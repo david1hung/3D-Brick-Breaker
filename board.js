@@ -10,6 +10,8 @@ var numVertices  = 36;
 var texSize = 64;
 
 var program;
+var play_song = false;
+var myAudio;
 
 var pointsArray = [];
 var colorsArray = [];
@@ -492,6 +494,24 @@ window.onload = function init() {
       animateWall = true;
     }
 
+			else if (event.keyCode == 83) //s to toggle music
+		{
+			play_song = !play_song;
+			if (play_song)
+			{
+				myAudio = new Audio('musicbg.wav'); 
+				myAudio.addEventListener('ended', function() {
+					this.currentTime = 0;
+					this.play();
+				}, false);
+				myAudio.play();
+			}
+			else
+			{
+				myAudio.pause();
+				myAudio.currentTime = 0;
+			}
+		}
 
 
         //console.log("Event");
@@ -605,6 +625,7 @@ function initLevel(i)
   console.log("Init Level:" + i);
   numBricks = 0;
   console.log(numBricks);
+
   var board;
   switch(i)
   {
@@ -643,7 +664,7 @@ function initLevel(i)
       {
           curBoard[i][j] = board[i][j];
           if (board[i][j] > 0)
-            numBricks ++;
+            numBricks++;
       }
     }
 
@@ -689,6 +710,7 @@ var curLife = 10;
 var curScore = 0;
 var isAlive = true;
 var numBricks = 0;
+
 
 var cube1Texture;
 var cube2Texture;
@@ -975,7 +997,7 @@ var render = function(time){
 			}
 			//moveD = !moveD; // We change the state of the balls movement to bounce back.
 			var brickNum = curBoard[BV[t][6]][BV[t][7]];
-			console.log (brickNum);
+			//console.log (brickNum);
 			// What type of brick it hits reduces
 		  if (brickNum == 1)
 		  {
@@ -1049,7 +1071,6 @@ var render = function(time){
 	gl.uniform1i(drawingSphere, true);
     gl.drawArrays( gl.TRIANGLES, numVertices, triIndex );
 	
-
   if (numBricks == 0)
   {
       console.log("Level:" + curLevel + "Complete");
@@ -1087,9 +1108,8 @@ var render = function(time){
 
 	px += 0.1;
 
-
-
-
+    //rotate cube
+    rotateCube();
 
     var seconds = time * 0.0015;
 
