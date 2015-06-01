@@ -11,7 +11,7 @@ var texSize = 64;
 
 var program;
 var play_song = true;
-var myAudio = new Audio('musicbg.wav'); 
+var myAudio = new Audio('sounds/musicbg.wav'); 
 
 var pointsArray = [];
 var colorsArray = [];
