@@ -489,7 +489,7 @@ window.onload = function init() {
 
     else if (event.keyCode == 13)
     {
-      isAlive = false;
+      animateWall = true;
     }
 
 
@@ -769,6 +769,11 @@ var render = function(time){
     if (animateIntro)
     {
       introAnimate();
+    }
+
+    if (animateWall)
+    {
+      spinWall();
     }
 
 	
