@@ -10,8 +10,8 @@ var numVertices  = 36;
 var texSize = 64;
 
 var program;
-var play_song = false;
-var myAudio;
+var play_song = true;
+var myAudio = new Audio('musicbg.wav'); 
 
 var pointsArray = [];
 var colorsArray = [];
@@ -497,20 +497,7 @@ window.onload = function init() {
 			else if (event.keyCode == 83) //s to toggle music
 		{
 			play_song = !play_song;
-			if (play_song)
-			{
-				myAudio = new Audio('musicbg.wav'); 
-				myAudio.addEventListener('ended', function() {
-					this.currentTime = 0;
-					this.play();
-				}, false);
-				myAudio.play();
-			}
-			else
-			{
-				myAudio.pause();
-				myAudio.currentTime = 0;
-			}
+
 		}
 
 
@@ -1131,6 +1118,20 @@ var render = function(time){
     
     
     ctx.fillStyle = 'rgba(255,255,255,255)';
+
+      if (play_song)
+      {
+        
+        myAudio.addEventListener('ended', function() {
+          this.currentTime = 0;
+          this.play();
+        }, false);
+        myAudio.play();
+      }
+      else
+      {
+        myAudio.pause();
+      }
 
 
     requestAnimFrame(render);
