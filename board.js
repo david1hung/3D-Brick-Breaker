@@ -955,7 +955,10 @@ var render = function(time){
 	if (testSphere(BV[2], sphereBV))
 		moveD = true;
 	if (dz > 10)
+  {
+    sLoseLife.play();
 		isAlive = false;
+  }
 	for (var t = 3; t < index-1; t++) {
 		if (CDPause == 0 && testSphere(BV[t], sphereBV)) {
 			switch (testSide(BV[t], sphereBV)) {
@@ -1095,7 +1098,7 @@ var render = function(time){
     ctx.fillText("LIVES:"+curLife, 10, 60);
     ctx.fillText("SCORE:"+curScore, 10, 90)
 
-    if (Math.floor(seconds) % 2 === 0 && !firstStart && (time > 3400))
+    if (Math.floor(seconds) % 2 === 0 && !firstStart && (time > 4200))
     {
       ctx.font = '20px joystix';
       ctx.fillText("Press the space bar to start game.", 203, 270); 
