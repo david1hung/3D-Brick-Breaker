@@ -19,6 +19,7 @@ var normalsArray = [];
 var textures = [];
 var texCoordsArray = [];
 var texCoordsArray2 = [];
+var metal_index = 0;
 
 
 var cube1Pos = [];
@@ -1030,13 +1031,37 @@ var render = function(time){
 			// What type of brick it hits reduces
 		  if (brickNum == 1)
 		  {
-					curBoard[BV[t][6]][BV[t][7]] = 10;
-			sHitMetal.play();
-		  }
-				else if (brickNum == 2)
+				curBoard[BV[t][6]][BV[t][7]] = 10;
+				if (metal_index == 0)
+				{
+					var sHitMetal0 = new Audio("sounds/metalbreak.wav");
+					sHitMetal0.play();
+				}
+				else if (metal_index == 1)
+				{
+					var sHitMetal1 = new Audio("sounds/metalbreak.wav");
+					sHitMetal1.play();
+				}
+				metal_index++;
+				if (metal_index == 2)
+					metal_index = 0;
+			}
+		 else if (brickNum == 2)
 		  {
-					curBoard[BV[t][6]][BV[t][7]] = 20;
-			sHitBrick.play();
+				curBoard[BV[t][6]][BV[t][7]] = 20;
+				if (metal_index == 0)
+				{
+					var sHitBrick0 = new Audio("sounds/metalbreak.wav");
+					sHitBrick0.play();
+				}
+				else if (metal_index == 1)
+				{
+					var sHitBrick1 = new Audio("sounds/metalbreak.wav");
+					sHitBrick1.play();
+				}
+				metal_index++;
+				if (metal_index == 2)
+					metal_index = 0;
 		  }
 
       else if (brickNum == 3)
