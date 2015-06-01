@@ -38,7 +38,9 @@ var moveD = false;
 var moveR = true;
 var CDPause = 0;
 var px = 0.0;
-var angle = 0.0;
+var angleInit = 0.1;
+var angle = angleInit;
+
 var angleL = 0.0;
 var padR = false;
 var padL = false;
@@ -403,7 +405,12 @@ window.onload = function init() {
         }
 
         else if (event.keyCode == 82) {
-          // s to pause animation
+          // r kill cube
+
+          isAlive = false;
+
+          /*
+          // r to pause animation
           if (animating)
           {
               animating = false;
@@ -412,6 +419,7 @@ window.onload = function init() {
           {
             animating = true;
           }
+          */
         }
 
         else if (event.keyCode == 78) {
@@ -476,7 +484,16 @@ window.onload = function init() {
 		{
 			start = true;
       firstStart = true;
+
+      // Ball is dead, move back to start position
 		}
+
+    else if (event.keyCode == 13)
+    {
+      isAlive = false;
+    }
+
+
 
         //console.log("Event");
            
@@ -669,6 +686,11 @@ var posOffset = [{'x':offset, 'z':offset}, {'x':offset, 'z':-offset}, {'x':-offs
 var curLevel = 1;
 var curBoard = boardTemp;
 var resetBoard = true;
+var curLife = 10;
+var curScore = 0;
+var isAlive = true;
+
+
 var cube1Texture;
 var cube2Texture;
 var cube3Texture;
@@ -778,14 +800,8 @@ var render = function(time){
     cube4Pos.splice(0,cube4Pos.length);
     dyingCubes1.splice(0,dyingCubes1.length);
     dyingCubes2.splice(0,dyingCubes2.length);
-	/*
-	cube1Pos.length = 0;
-    cube2Pos.length = 0;
-    cube3Pos.length = 0;
-    cube4Pos.length = 0;
-    dyingCubes1.length = 0;
-    dyingCubes2.length = 0;
-	*/
+
+
     // Loop inside board to configure
     for (var i = 0; i < 10; i++)
     {
@@ -876,9 +892,9 @@ var render = function(time){
   
   var modelTransform = mat4();
   if (padR == true)
-	  pad.pos[0] += 0.5;
+	  pad.pos[0] += 0.25;
   if (padL == true)
-	  pad.pos[0] -= 0.5;
+	  pad.pos[0] -= 0.25;
   modelTransform = mult(modelTransform, translate(pad.pos));
   modelTransform = mult(modelTransform, rotate(pad.angle, pad.rotateAxis));
   modelTransform = mult(modelTransform, scale(pad.scale));
@@ -922,8 +938,10 @@ var render = function(time){
 			}
 			//moveD = !moveD; // We change the state of the balls movement to bounce back.
 			var brickNum = curBoard[BV[t][6]][BV[t][7]];
-			console.log (brickNum);
-			if (brickNum == 1)
+			//console.log (brickNum);
+			
+      // What type of brick it hits reduces
+      if (brickNum == 1)
 				curBoard[BV[t][6]][BV[t][7]] = 10;
 			else if (brickNum == 2)
 				curBoard[BV[t][6]][BV[t][7]] = 20;
@@ -978,6 +996,19 @@ var render = function(time){
     gl.drawArrays( gl.TRIANGLES, numVertices, triIndex );
 	
 
+    // If ball is dead, move it back to 0. 
+  if (isAlive == false)
+  {
+     start = false;
+     isAlive = true;
+
+     dx = 0;
+     dy = 0; 
+     dz = 0;
+     angle = angleInit;
+     pad.pos[0] = 0;
+     curLife--;
+  }
 
 
 
@@ -989,9 +1020,9 @@ var render = function(time){
     var seconds = time * 0.0015;
 
     ctx.font = '20px joystix';
-    ctx.fillText("LEVEL:2", 800, 30);
-    ctx.fillText("LIVES:3", 800, 60);
-    ctx.fillText("SCORE:10", 800, 90)
+    ctx.fillText("LEVEL:"+ curLevel, 800, 30);
+    ctx.fillText("LIVES:"+curLife, 800, 60);
+    ctx.fillText("SCORE:"+curScore, 800, 90)
 
     if (Math.floor(seconds) % 2 === 0 && !start)
     {
