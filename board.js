@@ -1,5 +1,4 @@
 
-
 var canvas;
 var gl;
 
@@ -746,7 +745,7 @@ var sLoseLife = new Audio("sounds/loselife.wav");
 var render = function(time){
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-	var index = 4;
+	var index = 3;
 
     // Configure Projection Matrix
     var projectionMatrix = perspective(fovy, aspect, near, far);
@@ -800,7 +799,7 @@ var render = function(time){
 
     
     
-	cube1Pos.splice(0,cube1Pos.length);
+	  cube1Pos.splice(0,cube1Pos.length);
     cube2Pos.splice(0,cube2Pos.length);
     cube3Pos.splice(0,cube3Pos.length);
     cube4Pos.splice(0,cube4Pos.length);
@@ -837,13 +836,12 @@ var render = function(time){
               cube2Pos.push([i,j]);
 
               if (updateBV == true) {
-          BV[index] = [cur.pos[0] - cube1.scale[0]/2, cur.pos[1] - cube1.scale[1]/2, cur.pos[2] - cube1.scale[2]/2,
+				BV[index] = [cur.pos[0] - cube1.scale[0]/2, cur.pos[1] - cube1.scale[1]/2, cur.pos[2] - cube1.scale[2]/2,
                 cur.pos[0] + cube1.scale[0]/2, cur.pos[1] + cube1.scale[1]/2, cur.pos[2] + cube1.scale[2]/2,
                 i, j];
-        }
-        index += 1;
+				}
+				index += 1;
         
-				      continue;
                 break;
 
 /*
@@ -851,7 +849,6 @@ var render = function(time){
                  cur = cube1;
                  cur.pos = getCubePos(i,j);
                  cube4Pos.push([i,j]);
-
                  break;
                  */
 
@@ -1000,7 +997,6 @@ var render = function(time){
 				else
 					angle += 0.05;	
 			}
-			sHitPad.play();
 		}
 		if (popBV == true)
 			BV.pop();
