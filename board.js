@@ -994,13 +994,11 @@ var render = function(time){
     if (Math.floor(seconds) % 2 === 0 && !start)
     {
       ctx.font = '20px joystix';
-      ctx.fillText("Press the spacebar to start game.", 210, 270); 
+      ctx.fillText("Press the space bar to start game.", 210, 270); 
 
     }
 
     
-
-
     
     ctx.fillStyle = 'rgba(255,255,255,255)';
 
