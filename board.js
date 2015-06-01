@@ -692,12 +692,12 @@ function getCube(i){
     case 5: return cube5; 
 
 
-    case 10: case 20: return cube10; 
-    case 11: case 21: return cube11; 
-    case 12: case 22: return cube12; 
-    case 13: case 23: return cube13; 
-    case 14: case 24: return cube14;
-    case 15: case 25: return cube15; 
+    case 10: case 20: case 30: return cube10; 
+    case 11: case 21: case 31: return cube11; 
+    case 12: case 22: case 32: return cube12; 
+    case 13: case 23: case 33: return cube13; 
+    case 14: case 24: case 34: return cube14;
+    case 15: case 25: case 35: return cube15; 
   }
 
 }
@@ -933,8 +933,15 @@ var render = function(time){
                  //console.log(numBricks);
                  break;
 
-
               case 30:
+              case 31:
+              case 32:
+              case 33:
+              case 34:
+                 dyingCubes3.push([i,j]);
+                 curBoard[i][j]++;
+                 break;
+              case 35:
                  curBoard[i][j]=0;
                  curScore += 100;
                  numBricks--;
