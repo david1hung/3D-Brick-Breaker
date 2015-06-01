@@ -861,8 +861,9 @@ var render = function(time){
                  curBoard[i][j]++;
                  break;
               case 15:
-                 curBoard[i][j]=0;
-                  break;
+                curBoard[i][j]=0;
+                curScore += 100;
+                break;
 
 
               case 20:
@@ -875,6 +876,7 @@ var render = function(time){
                  break;
               case 25:
                  curBoard[i][j]=0;
+                 curScore += 100;
 
 
 
@@ -1059,9 +1061,9 @@ var render = function(time){
     var seconds = time * 0.0015;
 
     ctx.font = '20px joystix';
-    ctx.fillText("LEVEL:"+ curLevel, 800, 30);
-    ctx.fillText("LIVES:"+curLife, 800, 60);
-    ctx.fillText("SCORE:"+curScore, 800, 90)
+    ctx.fillText("LEVEL:"+ curLevel, 10, 30);
+    ctx.fillText("LIVES:"+curLife, 10, 60);
+    ctx.fillText("SCORE:"+curScore, 10, 90)
 
     if (Math.floor(seconds) % 2 === 0 && !firstStart)
     {
