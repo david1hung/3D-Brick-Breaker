@@ -10,6 +10,8 @@ var numVertices  = 36;
 var texSize = 64;
 
 var program;
+var play_song = false;
+var myAudio;
 
 var pointsArray = [];
 var colorsArray = [];
@@ -492,6 +494,24 @@ window.onload = function init() {
       animateWall = true;
     }
 
+			else if (event.keyCode == 83) //s to toggle music
+		{
+			play_song = !play_song;
+			if (play_song)
+			{
+				myAudio = new Audio('musicbg.wav'); 
+				myAudio.addEventListener('ended', function() {
+					this.currentTime = 0;
+					this.play();
+				}, false);
+				myAudio.play();
+			}
+			else
+			{
+				myAudio.pause();
+				myAudio.currentTime = 0;
+			}
+		}
 
 
         //console.log("Event");
@@ -603,7 +623,6 @@ function initLevel(i)
 {
   // Board defintions is in levelDef.js
   console.log("Init Level:" + i);
-  numBricks = 0;
   var board;
   switch(i)
   {
@@ -630,7 +649,7 @@ function initLevel(i)
       board = board2;
       break;
     default:
-      board = board11;
+      board = board00;
       cube1Texture = "metal";
       cube2Texture = "brick";
       cube3Texture = "metal2";
@@ -641,8 +660,6 @@ function initLevel(i)
       for (var j = 0; j < 9; j++)
       {
           curBoard[i][j] = board[i][j];
-          if (board[i][j] > 0)
-            numBricks ++;
       }
     }
 }
@@ -691,7 +708,7 @@ var resetBoard = true;
 var curLife = 10;
 var curScore = 0;
 var isAlive = true;
-var numBricks = 0;
+
 
 var cube1Texture;
 var cube2Texture;
@@ -876,7 +893,6 @@ var render = function(time){
               case 15:
                 curBoard[i][j]=0;
                 curScore += 100;
-                numBricks--;
                 break;
 
 
@@ -891,7 +907,6 @@ var render = function(time){
               case 25:
                  curBoard[i][j]=0;
                  curScore += 100;
-                 numBricks--;
 
 
 
@@ -1052,20 +1067,6 @@ var render = function(time){
     gl.drawArrays( gl.TRIANGLES, numVertices, triIndex );
 	
 
-  if (numBricks == 0)
-  {
-      curLevel++;
-      animateWall = true;
-      numBricks = -10;
-      isAlive = false;
-      curLife++;
-  }
-
-  if (!animateWall && numBricks == -10)
-  {
-    initLevel(curLevel);
-  }
-
     // If ball is dead, move it back to 0. 
   if (isAlive == false)
   {
@@ -1084,9 +1085,8 @@ var render = function(time){
 
 	px += 0.1;
 
-
-
-
+    //rotate cube
+    rotateCube();
 
     var seconds = time * 0.0015;
 
