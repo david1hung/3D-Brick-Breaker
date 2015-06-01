@@ -766,6 +766,11 @@ var render = function(time){
       resetBoard = false; // make reset board = true when all blocks are destroyed. 
     }
 
+    if (animateIntro)
+    {
+      introAnimate();
+    }
+
 	
 	// These turn on the attributes in the shaders to draw the cubes with textures.
 	gl.uniform1i(drawingSphere, false);
@@ -1065,7 +1070,7 @@ var render = function(time){
     ctx.fillText("LIVES:"+curLife, 10, 60);
     ctx.fillText("SCORE:"+curScore, 10, 90)
 
-    if (Math.floor(seconds) % 2 === 0 && !firstStart)
+    if (Math.floor(seconds) % 2 === 0 && !firstStart && (time > 3300))
     {
       ctx.font = '20px joystix';
       ctx.fillText("Press the space bar to start game.", 203, 270); 
