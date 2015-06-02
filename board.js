@@ -560,6 +560,19 @@ window.onload = function init() {
           curLevel=3;
           resetBoard = true;
         }
+		
+		//key 4 for level 4
+		else if (event.keyCode == 52)
+        {
+          curLevel=4;
+          resetBoard = true;
+        }
+				//key 5 for level 5
+		else if (event.keyCode == 53)
+        {
+          curLevel=5;
+          resetBoard = true;
+        }
 
         // Key '9' fills board
         else if (event.keyCode == 57)
@@ -620,7 +633,7 @@ window.onload = function init() {
 				wall3.pos[0] + wall3.scale[0]/2, wall3.pos[1] + wall3.scale[1]/2, wall3.pos[2] + wall3.scale[2]/2];
 	
   // 0
-	image = document.getElementById("stone");
+	image = document.getElementById("arenaWall");
 	configureTexture(image);
   // 1
 	image = document.getElementById("metal");
@@ -637,7 +650,13 @@ window.onload = function init() {
   image = document.getElementById("ice");
   configureTexture(image);
   // texture [5] // wall
-  image = document.getElementById("stone");
+  image = document.getElementById("arenaWall");
+  configureTexture(image);
+  // texture [6] 
+   image = document.getElementById("forest");
+  configureTexture(image);
+    // texture [7] 
+     image = document.getElementById("fire2");
   configureTexture(image);
 
     requestAnimFrame(render);
@@ -745,6 +764,15 @@ function initLevel(i)
     case 3:
       board = board3;
       break;
+	  
+	 case 4:
+	 board = board4;
+	 break;
+	 
+	 case 5:
+	 board = board5;
+	 break;
+	 
     default:
       board = board11;
   }
@@ -884,6 +912,7 @@ var render = function(time){
     if (animateWall)
     {
       spinWall();
+	  
     }
 
 	
@@ -1238,6 +1267,8 @@ var render = function(time){
       angle = angleInit;
       isAlive = false;
       curLife++;
+	  		  var levelup = new Audio("sounds/levelup.wav");
+		levelup.play();
   }
 
   if (!animateWall && numBricks == -10)
