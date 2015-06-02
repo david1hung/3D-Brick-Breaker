@@ -1182,11 +1182,23 @@ var render = function(time){
 	// at every render call, so it might be a bit inefficient. We could
 	// make it better by using bounding volume hierarchies.
 	if (testSphere(BV[0], sphereBV))
+	{
 		moveR = true;
+		sHitWall.play();
+		
+	}
 	if (testSphere(BV[1], sphereBV))
+	{
 		moveR = false;
+				sHitWall.play();
+		
+	}
 	if (testSphere(BV[2], sphereBV))
+	{
 		moveD = true;
+				sHitWall.play();
+		
+	}
 	if (dz > 10)
   {
     sLoseLife.play();
@@ -1310,6 +1322,7 @@ var render = function(time){
 	if (start == true) {
 		if (testSphere(BV[index - 1], sphereBV)) {
  			moveD = false;
+			sHitPad.play();
 			if (padR) {
 				if (angle == 0.0)
 					moveR = true;
