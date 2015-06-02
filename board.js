@@ -158,6 +158,7 @@ var c_angle_yaw= 0;    // turn of the camera
 var c_angle_pitch = 35;
 
 
+// Configures Texture! and pushes into textures[] array for easy access
 function configureTexture(image) {
     texture = gl.createTexture();
     gl.bindTexture( gl.TEXTURE_2D, texture );
@@ -176,7 +177,7 @@ function configureTexture(image) {
 }
 
 
-
+// Set elements for lighting
 function setElements(object, lit){
 	if(object == "pad") {
 		materialAmbient = vec4( 1.0, 1.0, 1.0, 1.0 );
@@ -205,7 +206,7 @@ function setElements(object, lit){
 }
 
 
-
+// For sphere initialization
 function quad(a, b, c, d) {
 
      pointsArray.push(vertices[a]); 
@@ -500,18 +501,6 @@ window.onload = function init() {
           // r kill cube
 
           isAlive = false;
-
-          /*
-          // r to pause animation
-          if (animating)
-          {
-              animating = false;
-          }
-          else
-          {
-            animating = true;
-          }
-          */
         }
 
         else if (event.keyCode == 78 && !gameOver) {
@@ -600,6 +589,7 @@ window.onload = function init() {
       // Ball is dead, move back to start position
 		}
 
+    // Press Enter to reset
     else if (event.keyCode == 13 && gameOver)
     {
       curLevel = 1;
@@ -614,9 +604,6 @@ window.onload = function init() {
 			play_song = !play_song;
 
 		}
-
-
-        //console.log("Event");
            
     });
 	
@@ -633,7 +620,7 @@ window.onload = function init() {
 
 	
 
-	
+	// Bounding volume for Wall
 	BV[0] = [wall1.pos[0] - wall1.scale[0]/2, wall1.pos[1] - wall1.scale[1]/2, wall1.pos[2] - wall1.scale[2]/2,
 				wall1.pos[0] + wall1.scale[0]/2, wall1.pos[1] + wall1.scale[1]/2, wall1.pos[2] + wall1.scale[2]/2];
 	BV[1] = [wall2.pos[0] - wall2.scale[0]/2, wall2.pos[1] - wall2.scale[1]/2, wall2.pos[2] - wall2.scale[2]/2,
@@ -641,10 +628,10 @@ window.onload = function init() {
 	BV[2] = [wall3.pos[0] - wall3.scale[0]/2, wall3.pos[1] - wall3.scale[1]/2, wall3.pos[2] - wall3.scale[2]/2,
 				wall3.pos[0] + wall3.scale[0]/2, wall3.pos[1] + wall3.scale[1]/2, wall3.pos[2] + wall3.scale[2]/2];
 	
-  // 0
+  // texture[0]
 	image = document.getElementById("arenaWall");
 	configureTexture(image);
-  // 1
+  // texture[1]
 	image = document.getElementById("metal");
 	configureTexture(image);
   // texture[2]
@@ -653,7 +640,6 @@ window.onload = function init() {
   // texture[3]
 	image = document.getElementById(pad.texImage);
 	configureTexture(image);
-	
 	
   // texture [4]
   image = document.getElementById("ice");
@@ -670,29 +656,6 @@ window.onload = function init() {
 
     requestAnimFrame(render);
  
-}
-
-
-// Animation for cube
-
-var animating = false; // true for orbiting, false to pause
-var lastUpdateTime = 0;
-
-function rotateCube()
-{
-    var currentTime = (new Date).getTime();
-    if (animating)
-    {
-         // use time to calculate real-time displacement
-        delta = currentTime - lastUpdateTime;
-
-        cube1.angle += 1*cube1.rotationSpeed*(delta/100.0);  
-        cube2.angle += 1*cube2.rotationSpeed*(delta/100.0);  
-
-        lastUpdateTime = currentTime; // update time
-    }
-    else
-        lastUpdateTime = currentTime;
 }
 
 
@@ -792,6 +755,8 @@ function initLevel(i)
       for (var j = 0; j < 9; j++)
       {
           curBoard[i][j] = board[i][j];
+
+          // Count the number of active bricks
           if (board[i][j] > 0)
             numBricks++;
       }
@@ -842,7 +807,7 @@ var numBricks = 0;
 
 
 
-
+// Draw cubes given array of positions
 var drawCubes = function (brickPos)
 {
   var i, j;
@@ -908,21 +873,23 @@ var render = function(time){
 
     gl.uniformMatrix4fv(cameraMatrixLoc, false, flatten(cameraMatrix) );
 
+    // Resets level
     if (resetBoard)
     {
       initLevel(curLevel);
       resetBoard = false; // make reset board = true when all blocks are destroyed. 
     }
 
+    // Do intro animation
     if (animateIntro)
     {
       introAnimate();
     }
 
+    // Spin wall on level complete
     if (animateWall)
     {
-      spinWall();
-	  
+      spinWall();  
     }
 
 	
@@ -934,8 +901,6 @@ var render = function(time){
 	
 	
     // initialize Wall
-    //image = document.getElementById("stone");  //texImage1 and texImage2 loaded by html.
-    //configureTexture(image);
 	gl.bindTexture(gl.TEXTURE_2D, textures[5]);
     gl.bufferData( gl.ARRAY_BUFFER, flatten(texCoordsArray2), gl.STATIC_DRAW );
 
@@ -956,7 +921,7 @@ var render = function(time){
     /////////////////////
     // Configure Cubes///
 
-    
+    // Clean up arrays
 	  cube1Pos.splice(0,cube1Pos.length);
     cube2Pos.splice(0,cube2Pos.length);
     cube3Pos.splice(0,cube3Pos.length);
@@ -975,6 +940,8 @@ var render = function(time){
         for (var j = 0; j < 9; j++)
         {
           //console.log(i + ' ' + j);
+
+          // Read the current board and draw each cube properly
             switch(curBoard[i][j])
             {
               case 1:
@@ -1129,7 +1096,8 @@ var render = function(time){
 	//updateBV = false;
     
 
-    //setTexture
+    // 1. setTexture for the cubes 
+    // 2. Draw the cubes
 	gl.bindTexture(gl.TEXTURE_2D, textures[1]);
 	gl.bufferData( gl.ARRAY_BUFFER, flatten(texCoordsArray), gl.STATIC_DRAW );
 	
@@ -1159,7 +1127,6 @@ var render = function(time){
 ///////////Drawing Pad/////////////
 ///////////////////////////////////
 
-  //setTexture(pad.texImage);
 	gl.bindTexture(gl.TEXTURE_2D, textures[3]);
 	
 	gl.enableVertexAttribArray( vNormal );
@@ -1177,6 +1144,9 @@ var render = function(time){
   setElements("pad", true);
 	
   gl.drawArrays( gl.TRIANGLES, 0, numVertices );
+
+
+
 
   // Collision detection for the pad is added here.
 	BV[index] = [pad.pos[0] - pad.scale[0]/2, pad.pos[1] - pad.scale[1]/2, pad.pos[2] - pad.scale[2]/2,
@@ -1233,8 +1203,9 @@ var render = function(time){
 			}
 			//moveD = !moveD; // We change the state of the balls movement to bounce back.
 			var brickNum = curBoard[BV[t][6]][BV[t][7]];
-			//console.log (brickNum);
-			// What type of brick it hits reduces
+
+
+			// Check for the brick it hits and process it
 		  if (brickNum == 1)
 		  {
 				curBoard[BV[t][6]][BV[t][7]] = 10;
@@ -1385,6 +1356,8 @@ var render = function(time){
 	setElements("ball", true);
 	gl.drawArrays( gl.TRIANGLES, numVertices, triIndex);
 	
+
+  // Check if level is complete
   if (numBricks == 0)
   {
       console.log("Level:" + curLevel + "Complete");
@@ -1402,6 +1375,7 @@ var render = function(time){
 		levelup.play();
   }
 
+  // Animate wall on level up
   if (!animateWall && numBricks == -10)
   {
     initLevel(curLevel);
@@ -1410,7 +1384,7 @@ var render = function(time){
       var seconds = time * 0.0015;
 
 
-    // If ball is dead, move it back to 0. 
+    // If ball is dead, move it back to 0 and reset pad. 
   if (isAlive == false)
   {
      start = false;
@@ -1446,15 +1420,9 @@ var render = function(time){
    
   }
 
-
-
-
-    //rotate cube
-    rotateCube();
-
-
-
-    //curScore
+    //////////////////
+    //Display Texts//
+    //////////////////
 
     ctx.font = '20px joystix';
     ctx.fillText("LEVEL:"+ curLevel, 10, 30);
@@ -1470,10 +1438,11 @@ var render = function(time){
 
     }
 
-    
-    
     ctx.fillStyle = 'rgba(255,255,255,255)';
 
+    ///////////////////
+    // Background music
+    ////////////////////
       if (play_song)
       {
         
