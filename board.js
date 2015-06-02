@@ -27,9 +27,12 @@ var cube1Pos = [];
 var cube2Pos = [];
 var cube3Pos = [];
 var cube4Pos = [];
+var cube5Pos = [];
 var dyingCubes1 = [];
 var dyingCubes2 = [];
 var dyingCubes3 = [];
+var dyingCubes4 = [];
+var dyingCubes5 = [];
 
 var sphereBV = [0.0,0.0,7.0,0.5];
 var BV = [];
@@ -494,7 +497,7 @@ window.onload = function init() {
         else if (event.keyCode == 82) {
           // r kill cube
 
-          //isAlive = false;
+          isAlive = false;
 
           /*
           // r to pause animation
@@ -703,6 +706,7 @@ var cube1 = {'name': "cube1", 'pos': [8,0,-15], 'scale':[1.9,0.95,1.9], 'texImag
 var cube2 = {'name': "cube2", 'pos': [1,0,8], 'scale':[1.9,0.95,1.9], 'texImage':"texImage2",  'angle':90, 'rotationSpeed':5, 'rotateAxis': [0,1,0]};
 var cube3 = {'name': "cube3", 'pos': [1.5,0,-5], 'scale':[1.9,0.95,1.9], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
 var cube4 = {'name': "cube4", 'pos': [1.5,0,-5], 'scale':[1.9,0.95,1.9], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
+var cube5 = {'name': "cube5", 'pos': [1.5,0,-5], 'scale':[1.9,0.95,1.9], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
 
 var cube10 = {'name':"dyingCubes", 'pos': [1.5,0,-5], 'scale':[1.9*0.9,0.95*0.9,1.9*0.9], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
 var cube11 = {'name':"dyingCubes", 'pos': [1.5,0,-5], 'scale':[1.9*0.8,0.95*0.8,1.9*0.8], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
@@ -734,9 +738,9 @@ function getCubePos(i, j)
 function initLevel(i)
 {
   // Board defintions is in levelDef.js
-  console.log("Init Level:" + i);
+  console.log("Init Level: " + i);
   numBricks = 0;
-  console.log(numBricks);
+  //console.log(numBricks);
 
   var board;
   switch(i)
@@ -766,11 +770,11 @@ function initLevel(i)
       break;
 	  
 	 case 4:
-	 board = board4;
+	   board = board4;
 	 break;
 	 
 	 case 5:
-	 board = board5;
+	   board = board5;
 	 break;
 	 
     default:
@@ -787,7 +791,7 @@ function initLevel(i)
       }
     }
 
-  console.log("NumBricks:" + numBricks);
+  console.log("NumBricks: " + numBricks);
 }
 
 // Returns Cube
@@ -801,12 +805,12 @@ function getCube(i){
     case 5: return cube5; 
 
 
-    case 10: case 20: case 30: return cube10; 
-    case 11: case 21: case 31: return cube11; 
-    case 12: case 22: case 32: return cube12; 
-    case 13: case 23: case 33: return cube13; 
-    case 14: case 24: case 34: return cube14;
-    case 15: case 25: case 35: return cube15; 
+    case 10: case 20: case 30: case 40: case 50: return cube10; 
+    case 11: case 21: case 31: case 41: case 51: return cube11; 
+    case 12: case 22: case 32: case 42: case 52: return cube12; 
+    case 13: case 23: case 33: case 43: case 53: return cube13; 
+    case 14: case 24: case 34: case 44: case 54: return cube14;
+    case 15: case 25: case 35: case 45: case 55: return cube15; 
   }
 
 }
@@ -951,9 +955,12 @@ var render = function(time){
     cube2Pos.splice(0,cube2Pos.length);
     cube3Pos.splice(0,cube3Pos.length);
     cube4Pos.splice(0,cube4Pos.length);
+    cube5Pos.splice(0,cube5Pos.length);
     dyingCubes1.splice(0,dyingCubes1.length);
     dyingCubes2.splice(0,dyingCubes2.length);
     dyingCubes3.splice(0,dyingCubes3.length);
+    dyingCubes4.splice(0,dyingCubes4.length);
+    dyingCubes5.splice(0,dyingCubes5.length);
 
     // Loop inside board to configure
     for (var i = 0; i < 10; i++)
@@ -1005,13 +1012,32 @@ var render = function(time){
               }
               index += 1;
               break;
-/*          
-              case 4: // broken metal cube
-                 cur = cube1;
-                 cur.pos = getCubePos(i,j);
-                 cube4Pos.push([i,j]);
-                 break;
-                 */
+       
+            case 4:
+              cur = cube1;
+              cur.pos = getCubePos(i,j);
+              cube4Pos.push([i,j]);
+
+              if (updateBV == true) {
+                BV[index] = [cur.pos[0] - cube1.scale[0]/2, cur.pos[1] - cube1.scale[1]/2, cur.pos[2] - cube1.scale[2]/2,
+                cur.pos[0] + cube1.scale[0]/2, cur.pos[1] + cube1.scale[1]/2, cur.pos[2] + cube1.scale[2]/2,
+                i, j];
+              }
+              index += 1;
+              break;
+                 
+            case 5:
+              cur = cube2;
+              cur.pos = getCubePos(i,j);
+              cube5Pos.push([i,j]);
+
+              if (updateBV == true) {
+                BV[index] = [cur.pos[0] - cube1.scale[0]/2, cur.pos[1] - cube1.scale[1]/2, cur.pos[2] - cube1.scale[2]/2,
+                cur.pos[0] + cube1.scale[0]/2, cur.pos[1] + cube1.scale[1]/2, cur.pos[2] + cube1.scale[2]/2,
+                i, j];
+              }
+              index += 1;
+              break;
 
               case 10:
               case 11:
@@ -1056,7 +1082,37 @@ var render = function(time){
                  curBoard[i][j]=0;
                  curScore += 100;
                  numBricks--;
-                 console.log(numBricks);
+                 //console.log(numBricks);
+                 break;
+
+              case 40:
+              case 41:
+              case 42:
+              case 43:
+              case 44:
+                 dyingCubes4.push([i,j]);
+                 curBoard[i][j]++;
+                 break;
+              case 45:
+                 curBoard[i][j]=0;
+                 curScore += 100;
+                 numBricks--;
+                 //console.log(numBricks);
+                 break;
+
+              case 50:
+              case 51:
+              case 52:
+              case 53:
+              case 54:
+                 dyingCubes5.push([i,j]);
+                 curBoard[i][j]++;
+                 break;
+              case 55:
+                 curBoard[i][j]=0;
+                 curScore += 100;
+                 numBricks--;
+                 //console.log(numBricks);
                  break;
 
               default: // skip block and don't draw.
@@ -1083,7 +1139,14 @@ var render = function(time){
   gl.bindTexture(gl.TEXTURE_2D, textures[4]);
     drawCubes(cube3Pos);
     drawCubes(dyingCubes3);
-    
+
+  gl.bindTexture(gl.TEXTURE_2D, textures[6]);
+    drawCubes(cube4Pos);
+    drawCubes(dyingCubes4);
+  
+  gl.bindTexture(gl.TEXTURE_2D, textures[7]);
+    drawCubes(cube5Pos);
+    drawCubes(dyingCubes5);
 
 
 ///////////////////////////////////
@@ -1203,6 +1266,40 @@ var render = function(time){
 				metal_index++;
 				if (metal_index == 2)
 					metal_index = 0;
+      }
+      else if (brickNum == 4)
+      {
+          curBoard[BV[t][6]][BV[t][7]] = 40;
+        if (metal_index == 0)
+        {
+          var sHitBrick2 = new Audio("sounds/metalbreak.wav");
+          sHitBrick2.play();
+        }
+        else if (metal_index == 1)
+        {
+          var sHitBrick3 = new Audio("sounds/metalbreak.wav");
+          sHitBrick3.play();
+        }
+        metal_index++;
+        if (metal_index == 2)
+          metal_index = 0;
+      }
+      else if (brickNum == 5)
+      {
+          curBoard[BV[t][6]][BV[t][7]] = 50;
+        if (metal_index == 0)
+        {
+          var sHitBrick2 = new Audio("sounds/metalbreak.wav");
+          sHitBrick2.play();
+        }
+        else if (metal_index == 1)
+        {
+          var sHitBrick3 = new Audio("sounds/metalbreak.wav");
+          sHitBrick3.play();
+        }
+        metal_index++;
+        if (metal_index == 2)
+          metal_index = 0;
       }
 
 			popBV = true;
