@@ -1188,11 +1188,25 @@ var render = function(time){
 	// at every render call, so it might be a bit inefficient. We could
 	// make it better by using bounding volume hierarchies.
 	if (testSphere(BV[0], sphereBV))
+	{
 		moveR = true;
+		var sHitWall1 = new Audio("sounds/ballhitswall.wav");
+		sHitWall1.play();
+	}
 	if (testSphere(BV[1], sphereBV))
+	{
 		moveR = false;
+		var sHitWall2 = new Audio("sounds/ballhitswall.wav");
+		sHitWall2.play();
+		
+	}
 	if (testSphere(BV[2], sphereBV))
+	{
 		moveD = true;
+		var sHitWall3 = new Audio("sounds/ballhitswall.wav");
+		sHitWall3.play();
+		
+	}
 	if (dz > 10)
   {
     sLoseLife.play();
@@ -1316,6 +1330,7 @@ var render = function(time){
 	if (start == true) {
 		if (testSphere(BV[index - 1], sphereBV)) {
  			moveD = false;
+			sHitPad.play();
 			if (padR) {
 				if (angle == 0.0)
 					moveR = true;
