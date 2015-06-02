@@ -1263,7 +1263,6 @@ var render = function(time){
 
 
 
-	px += 0.1;
 
     //rotate cube
     rotateCube();
