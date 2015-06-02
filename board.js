@@ -1190,7 +1190,19 @@ var render = function(time){
       else if (brickNum == 3)
       {
           curBoard[BV[t][6]][BV[t][7]] = 30;
-      sHitBrick.play();
+				if (metal_index == 0)
+				{
+					var sHitBrick2 = new Audio("sounds/metalbreak.wav");
+					sHitBrick2.play();
+				}
+				else if (metal_index == 1)
+				{
+					var sHitBrick3 = new Audio("sounds/metalbreak.wav");
+					sHitBrick3.play();
+				}
+				metal_index++;
+				if (metal_index == 2)
+					metal_index = 0;
       }
 
 			popBV = true;
