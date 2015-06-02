@@ -1397,6 +1397,7 @@ var render = function(time){
       angle = angleInit;
       isAlive = false;
       curLife++;
+
 	  		  var levelup = new Audio("sounds/levelup2.wav");
 		levelup.play();
   }
@@ -1415,6 +1416,15 @@ var render = function(time){
      start = false;
      isAlive = true;
 
+        dx = 0;
+       dy = 0; 
+       dz = 0;
+       angle = angleInit;
+       pad.pos[0] = 0;
+       sphereBV = [0.0,0.0,7.0,0.5];
+      if (curLife >= 1)
+        curLife--;
+
      if (curLife == 0)
      {
       gameOver = true;
@@ -1430,17 +1440,10 @@ var render = function(time){
       ctx.fillText("Final Score:" + curScore, 370, 260); 
       ctx.fillText("Press enter to restart game.", 250, 280);
       ctx.fillStyle = 'rgba(255,255,255,255)';
+      
      }
-     else {
 
-       dx = 0;
-       dy = 0; 
-       dz = 0;
-       angle = angleInit;
-       pad.pos[0] = 0;
-       sphereBV = [0.0,0.0,7.0,0.5];
-       curLife--;
-   }
+   
   }
 
 
