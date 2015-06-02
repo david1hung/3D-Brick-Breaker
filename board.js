@@ -10,8 +10,9 @@ var numVertices  = 36;
 var texSize = 64;
 
 var program;
-var nBuffer1;
-var nBuffer2;
+
+var play_song = true;
+var myAudio = new Audio('sounds/musicbg.wav');
 
 var pointsArray = [];
 var colorsArray = [];
@@ -19,6 +20,7 @@ var normalsArray = [];
 var textures = [];
 var texCoordsArray = [];
 var texCoordsArray2 = [];
+var metal_index = 0;
 
 
 var cube1Pos = [];
@@ -27,6 +29,7 @@ var cube3Pos = [];
 var cube4Pos = [];
 var dyingCubes1 = [];
 var dyingCubes2 = [];
+var dyingCubes3 = [];
 
 var sphereBV = [0.0,0.0,7.0,0.5];
 var BV = [];
@@ -58,12 +61,17 @@ var texCoord = [
     vec2(0, 1),
     vec2(1, 1),
     vec2(1, 0), 
-
-
+/*
+    vec2(0, 0),
+    vec2(0, 1),
+    vec2(1, 1),
+    vec2(1, 0),
+*/
     vec2(0, 0),
     vec2(0, 2),
     vec2(16, 2),
     vec2(16, 0)
+    
 
 ];
 
@@ -486,7 +494,7 @@ window.onload = function init() {
         else if (event.keyCode == 82) {
           // r kill cube
 
-          isAlive = false;
+          //isAlive = false;
 
           /*
           // r to pause animation
@@ -546,6 +554,13 @@ window.onload = function init() {
           resetBoard = true;
         }
 
+        // key 3 for level 3
+        else if (event.keyCode == 51)
+        {
+          curLevel=3;
+          resetBoard = true;
+        }
+
         // Key '9' fills board
         else if (event.keyCode == 57)
         {
@@ -569,9 +584,14 @@ window.onload = function init() {
 
     else if (event.keyCode == 13)
     {
-      isAlive = false;
+      animateWall = true;
     }
 
+			else if (event.keyCode == 83) //s to toggle music
+		{
+			play_song = !play_song;
+
+		}
 
 
         //console.log("Event");
@@ -599,18 +619,27 @@ window.onload = function init() {
 	BV[2] = [wall3.pos[0] - wall3.scale[0]/2, wall3.pos[1] - wall3.scale[1]/2, wall3.pos[2] - wall3.scale[2]/2,
 				wall3.pos[0] + wall3.scale[0]/2, wall3.pos[1] + wall3.scale[1]/2, wall3.pos[2] + wall3.scale[2]/2];
 	
+  // 0
 	image = document.getElementById("stone");
 	configureTexture(image);
+  // 1
 	image = document.getElementById("metal");
 	configureTexture(image);
+  // texture[2]
 	image = document.getElementById("brick");
 	configureTexture(image);
+  // texture[3]
 	image = document.getElementById(pad.texImage);
 	configureTexture(image);
 	
-	gl.uniform4fv( gl.getUniformLocation(program, 
-       "lightPosition"),flatten(lightPosition) );
 	
+  // texture [4]
+  image = document.getElementById("ice");
+  configureTexture(image);
+  // texture [5] // wall
+  image = document.getElementById("stone");
+  configureTexture(image);
+
     requestAnimFrame(render);
  
 }
@@ -663,7 +692,7 @@ var cube13 = {'name':"dyingCubes", 'pos': [1.5,0,-5], 'scale':[1.9*0.3,0.95*0.3,
 var cube14 = {'name':"dyingCubes", 'pos': [1.5,0,-5], 'scale':[1.9*0.1,0.95*0.1,1.9*0.1], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
 var cube15 = {'name':"dyingCubes", 'pos': [1.5,0,-5], 'scale':[0,0,0], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
 
-var pad = {'name': "pad", 'pos': [0,0,8.5], 'scale':[4,0.7,0.5], 'texImage':"bricks", 'angle':180, 'rotationSpeed':10, 'rotateAxis': [0,1,0]};
+var pad = {'name': "pad", 'pos': [0,0,8.5], 'scale':[4,0.7,0.5], 'texImage':"arenaWall", 'angle':180, 'rotationSpeed':10, 'rotateAxis': [0,1,0]};
 function getPad(){
   return pad;
 }
@@ -687,6 +716,9 @@ function initLevel(i)
 {
   // Board defintions is in levelDef.js
   console.log("Init Level:" + i);
+  numBricks = 0;
+  console.log(numBricks);
+
   var board;
   switch(i)
   {
@@ -703,20 +735,18 @@ function initLevel(i)
       // Level 1
     case 1:
       board = board1;
-      cube1Texture = "metal";
-      cube2Texture = "brick";
-      cube3Texture = "metal2";
       break;
 
       // Level 2
     case 2:
       board = board2;
       break;
+
+    case 3:
+      board = board3;
+      break;
     default:
-      board = board00;
-      cube1Texture = "metal";
-      cube2Texture = "brick";
-      cube3Texture = "metal2";
+      board = board11;
   }
 
     for (var i = 0; i < 10; i++)
@@ -724,8 +754,12 @@ function initLevel(i)
       for (var j = 0; j < 9; j++)
       {
           curBoard[i][j] = board[i][j];
+          if (board[i][j] > 0)
+            numBricks++;
       }
     }
+
+  console.log("NumBricks:" + numBricks);
 }
 
 // Returns Cube
@@ -739,20 +773,14 @@ function getCube(i){
     case 5: return cube5; 
 
 
-    case 10: case 20: return cube10; 
-    case 11: case 21: return cube11; 
-    case 12: case 22: return cube12; 
-    case 13: case 23: return cube13; 
-    case 14: case 24: return cube14;
-    case 15: case 25: return cube15; 
+    case 10: case 20: case 30: return cube10; 
+    case 11: case 21: case 31: return cube11; 
+    case 12: case 22: case 32: return cube12; 
+    case 13: case 23: case 33: return cube13; 
+    case 14: case 24: case 34: return cube14;
+    case 15: case 25: case 35: return cube15; 
   }
 
-    if (i==10) return cube10;
-    if (i==11) return cube11;
-    if (i==12) return cube12;
-    if (i==13) return cube13;
-    if (i==14) return cube14;
-    if (i==15) return cube15;
 }
 
 // Returns Wall
@@ -772,11 +800,8 @@ var resetBoard = true;
 var curLife = 10;
 var curScore = 0;
 var isAlive = true;
+var numBricks = 0;
 
-
-var cube1Texture;
-var cube2Texture;
-var cube3Texture;
 
 
 
@@ -851,6 +876,16 @@ var render = function(time){
       resetBoard = false; // make reset board = true when all blocks are destroyed. 
     }
 
+    if (animateIntro)
+    {
+      introAnimate();
+    }
+
+    if (animateWall)
+    {
+      spinWall();
+    }
+
 	
 	// These turn on the attributes in the shaders to draw the cubes with textures.
 	gl.uniform1i(drawingSphere, false);
@@ -862,7 +897,7 @@ var render = function(time){
     // initialize Wall
     //image = document.getElementById("stone");  //texImage1 and texImage2 loaded by html.
     //configureTexture(image);
-	gl.bindTexture(gl.TEXTURE_2D, textures[0]);
+	gl.bindTexture(gl.TEXTURE_2D, textures[5]);
     gl.bufferData( gl.ARRAY_BUFFER, flatten(texCoordsArray2), gl.STATIC_DRAW );
 
     for (var i = 0; i < 3; i++)
@@ -883,14 +918,13 @@ var render = function(time){
     // Configure Cubes///
 
     
-    
 	  cube1Pos.splice(0,cube1Pos.length);
     cube2Pos.splice(0,cube2Pos.length);
     cube3Pos.splice(0,cube3Pos.length);
     cube4Pos.splice(0,cube4Pos.length);
     dyingCubes1.splice(0,dyingCubes1.length);
     dyingCubes2.splice(0,dyingCubes2.length);
-
+    dyingCubes3.splice(0,dyingCubes3.length);
 
     // Loop inside board to configure
     for (var i = 0; i < 10; i++)
@@ -929,7 +963,20 @@ var render = function(time){
         
                 break;
 
-/*
+
+            case 3:
+              cur = cube2;
+              cur.pos = getCubePos(i,j);
+              cube3Pos.push([i,j]);
+
+              if (updateBV == true) {
+                BV[index] = [cur.pos[0] - cube1.scale[0]/2, cur.pos[1] - cube1.scale[1]/2, cur.pos[2] - cube1.scale[2]/2,
+                cur.pos[0] + cube1.scale[0]/2, cur.pos[1] + cube1.scale[1]/2, cur.pos[2] + cube1.scale[2]/2,
+                i, j];
+              }
+              index += 1;
+              break;
+/*          
               case 4: // broken metal cube
                  cur = cube1;
                  cur.pos = getCubePos(i,j);
@@ -946,8 +993,11 @@ var render = function(time){
                  curBoard[i][j]++;
                  break;
               case 15:
-                 curBoard[i][j]=0;
-                  break;
+                curBoard[i][j]=0;
+                curScore += 100;
+                numBricks--;
+                //console.log(numBricks);
+                break;
 
 
               case 20:
@@ -960,8 +1010,25 @@ var render = function(time){
                  break;
               case 25:
                  curBoard[i][j]=0;
+                 curScore += 100;
+                 numBricks--;
+                 //console.log(numBricks);
+                 break;
 
-
+              case 30:
+              case 31:
+              case 32:
+              case 33:
+              case 34:
+                 dyingCubes3.push([i,j]);
+                 curBoard[i][j]++;
+                 break;
+              case 35:
+                 curBoard[i][j]=0;
+                 curScore += 100;
+                 numBricks--;
+                 console.log(numBricks);
+                 break;
 
               default: // skip block and don't draw.
                 continue;
@@ -971,7 +1038,7 @@ var render = function(time){
 	//updateBV = false;
     
 
-    //setTexture(cube1Texture);
+    //setTexture
 	gl.bindTexture(gl.TEXTURE_2D, textures[1]);
 	gl.bufferData( gl.ARRAY_BUFFER, flatten(texCoordsArray), gl.STATIC_DRAW );
 	
@@ -983,10 +1050,11 @@ var render = function(time){
     drawCubes(cube2Pos);
     drawCubes(dyingCubes2);
 
-/*
-  gl.bindTexture(gl.TEXTURE_2D, textures[2]);
-    drawCubes(cube4Pos);
-    */
+
+  gl.bindTexture(gl.TEXTURE_2D, textures[4]);
+    drawCubes(cube3Pos);
+    drawCubes(dyingCubes3);
+    
 
 
 ///////////////////////////////////
@@ -999,9 +1067,9 @@ var render = function(time){
 	gl.enableVertexAttribArray( vNormal );
   
   var modelTransform = mat4();
-  if (padR == true)
+  if (padR == true && pad.pos[0] < 11.2)
 	  pad.pos[0] += 0.25;
-  if (padL == true)
+  if (padL == true && pad.pos[0] > -11.2)
 	  pad.pos[0] -= 0.25;
   modelTransform = mult(modelTransform, translate(pad.pos));
   modelTransform = mult(modelTransform, rotate(pad.angle, pad.rotateAxis));
@@ -1028,7 +1096,10 @@ var render = function(time){
 	if (testSphere(BV[2], sphereBV))
 		moveD = true;
 	if (dz > 10)
+  {
+    sLoseLife.play();
 		isAlive = false;
+  }
 	for (var t = 3; t < index-1; t++) {
 		if (CDPause == 0 && testSphere(BV[t], sphereBV)) {
 			switch (testSide(BV[t], sphereBV)) {
@@ -1054,14 +1125,44 @@ var render = function(time){
 			// What type of brick it hits reduces
 		  if (brickNum == 1)
 		  {
-					curBoard[BV[t][6]][BV[t][7]] = 4;
-			sHitMetal.play();
-		  }
-				else if (brickNum == 2)
+				curBoard[BV[t][6]][BV[t][7]] = 10;
+				if (metal_index == 0)
+				{
+					var sHitMetal0 = new Audio("sounds/metalbreak.wav");
+					sHitMetal0.play();
+				}
+				else if (metal_index == 1)
+				{
+					var sHitMetal1 = new Audio("sounds/metalbreak.wav");
+					sHitMetal1.play();
+				}
+				metal_index++;
+				if (metal_index == 2)
+					metal_index = 0;
+			}
+		 else if (brickNum == 2)
 		  {
-					curBoard[BV[t][6]][BV[t][7]] = 20;
-			sHitBrick.play();
+				curBoard[BV[t][6]][BV[t][7]] = 20;
+				if (metal_index == 0)
+				{
+					var sHitBrick0 = new Audio("sounds/metalbreak.wav");
+					sHitBrick0.play();
+				}
+				else if (metal_index == 1)
+				{
+					var sHitBrick1 = new Audio("sounds/metalbreak.wav");
+					sHitBrick1.play();
+				}
+				metal_index++;
+				if (metal_index == 2)
+					metal_index = 0;
 		  }
+
+      else if (brickNum == 3)
+      {
+          curBoard[BV[t][6]][BV[t][7]] = 30;
+      sHitBrick.play();
+      }
 
 			popBV = true;
 			break;
@@ -1125,6 +1226,24 @@ var render = function(time){
 	setElements("ball", true);
 	gl.drawArrays( gl.TRIANGLES, numVertices, triIndex);
 	
+  if (numBricks == 0)
+  {
+      console.log("Level:" + curLevel + "Complete");
+      curLevel++;
+      animateWall = true;
+      numBricks = -10;
+      dx = 0;
+      dy = 0; 
+      dz = 0;
+      angle = angleInit;
+      isAlive = false;
+      curLife++;
+  }
+
+  if (!animateWall && numBricks == -10)
+  {
+    initLevel(curLevel);
+  }
 
     // If ball is dead, move it back to 0. 
   if (isAlive == false)
@@ -1132,11 +1251,13 @@ var render = function(time){
      start = false;
      isAlive = true;
 
+
      dx = 0;
      dy = 0; 
      dz = 0;
      angle = angleInit;
      pad.pos[0] = 0;
+     sphereBV = [0.0,0.0,7.0,0.5];
      curLife--;
   }
 
@@ -1149,12 +1270,14 @@ var render = function(time){
 
     var seconds = time * 0.0015;
 
-    ctx.font = '20px joystix';
-    ctx.fillText("LEVEL:"+ curLevel, 800, 30);
-    ctx.fillText("LIVES:"+curLife, 800, 60);
-    ctx.fillText("SCORE:"+curScore, 800, 90)
+    //curScore
 
-    if (Math.floor(seconds) % 2 === 0 && !firstStart)
+    ctx.font = '20px joystix';
+    ctx.fillText("LEVEL:"+ curLevel, 10, 30);
+    ctx.fillText("LIVES:"+curLife, 10, 60);
+    ctx.fillText("SCORE:"+curScore, 10, 90)
+
+    if (Math.floor(seconds) % 2 === 0 && !firstStart && (time > 4200))
     {
       ctx.font = '20px joystix';
       ctx.fillText("Press the space bar to start game.", 203, 270); 
@@ -1164,6 +1287,20 @@ var render = function(time){
     
     
     ctx.fillStyle = 'rgba(255,255,255,255)';
+
+      if (play_song)
+      {
+        
+        myAudio.addEventListener('ended', function() {
+          this.currentTime = 0;
+          this.play();
+        }, false);
+        myAudio.play();
+      }
+      else
+      {
+        myAudio.pause();
+      }
 
 
     requestAnimFrame(render);
