@@ -47,7 +47,14 @@ Our group make a a brick breaker like game in 3D. Levels include normal bricks, 
 	- Spheres, walls and pad are transformed throughout the level. 
 
 
-## Programming Detections
+## Programming Decisions
 - Multiple texture of bricks can exist in the same level but only one is applied for bricks at a time for better aesthetics. 
 - LevelDef.js defines the board definitions and initLevel processes the initialization of levels. 
 - When colliding with two cubes, the ball can exhibit strange behavior. The fix for this is to pause collision detection for a small time and also default to having the ball move down upon complex collisions.
+- Score display is implemented in html fill text.
+
+
+## Extras
+- All of the music, sounds, and textures were original. 
+	- Created by Tim Portfolio
+
