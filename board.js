@@ -55,6 +55,8 @@ var padL = false;
 var popBV = false;
 var start = false;
 var firstStart = false;
+var gameOver = false;
+var highScore = 0;
 
 var texture;
 var image;
@@ -444,57 +446,57 @@ window.onload = function init() {
 
 
     document.addEventListener('keydown', function(event){
-        if(event.keyCode ==38){
+        if(event.keyCode ==38 && !gameOver){
             //Up cursor key   shift camer up/shift world down
             c_y -=0.25;
         }
-        else if(event.keyCode ==40){
+        else if(event.keyCode ==40 && !gameOver){
             //Down cursor key
             c_y +=0.25;
         }
-        else if (event.keyCode ==37){
+        else if (event.keyCode ==37 && !gameOver){
             // left, turn left
             //c_angle_yaw -= 1;
 			padL = true;
             //pad.pos[0] -=px;
 			//px += 0.01 + px;
         }
-        else if (event.keyCode ==39){
+        else if (event.keyCode ==39 && !gameOver){
             // right, turn right
             //c_angle_yaw += 1;
 			padR = true;
             //pad.pos[0] +=px;
 			//px += 0.01 + px;
         }
-        else if (event.keyCode == 73){
+        else if (event.keyCode == 73 && !gameOver){
             //i key go forward
 
             c_z += 0.25 * Math.cos(radians(c_angle_yaw));   // cosine and sine for proper motion
 
             c_x -= 0.25 * Math.sin(radians(c_angle_yaw));
         }
-        else if (event.keyCode == 79) {
+        else if (event.keyCode == 79 && !gameOver) {
             //o key go backward   or m 
             c_z -= 0.25 * Math.cos(radians(c_angle_yaw));
             c_x += 0.25 * Math.sin(radians(c_angle_yaw));
         }
-        else if (event.keyCode == 77) {
+        else if (event.keyCode == 77 && !gameOver) {
             //m key to go backward also
             c_z -= 0.25 * Math.cos(radians(c_angle_yaw));
             c_x += 0.25 * Math.sin(radians(c_angle_yaw));
         }
-        else if (event.keyCode == 74){
+        else if (event.keyCode == 74 && !gameOver){
             //j key go left
             c_x += 0.25*Math.cos(radians(c_angle_yaw));
 			c_z += 0.25*Math.sin(radians(c_angle_yaw));
         }
-        else if (event.keyCode == 75){
+        else if (event.keyCode == 75 && !gameOver){
             //k key go right
             c_x -= 0.25*Math.cos(radians(c_angle_yaw));
 			c_z -= 0.25*Math.sin(radians(c_angle_yaw));
         }
 
-        else if (event.keyCode == 82) {
+        else if (event.keyCode == 82 && !gameOver) {
           // r kill cube
 
           isAlive = false;
@@ -512,16 +514,16 @@ window.onload = function init() {
           */
         }
 
-        else if (event.keyCode == 78) {
+        else if (event.keyCode == 78 && !gameOver) {
             // n, narrow field of view
             fovy += 2.5;
         }
-        else if (event.keyCode == 87) {
+        else if (event.keyCode == 87 && !gameOver) {
             // w, narrow field of view
             fovy -= 2.5;
         }
 
-        else if (event.keyCode == 81)
+        else if (event.keyCode == 81 && !gameOver)
           // q to reset
         {
           c_x = 0;
@@ -531,7 +533,7 @@ window.onload = function init() {
           fovy = fovy_init;
         }
 
-        else if (event.keyCode == 66)
+        else if (event.keyCode == 66 && !gameOver)
           // q to reset
         {
           for (var i = 0; i < 19; i++)
@@ -544,48 +546,48 @@ window.onload = function init() {
         }
 
         // key '1' intialized level 1
-        else if (event.keyCode == 49)
+        else if (event.keyCode == 49 && !gameOver)
         {
           curLevel=1;
           resetBoard = true;
         }
 
         // key '2' intialized level 2
-        else if (event.keyCode == 50)
+        else if (event.keyCode == 50 && !gameOver)
         {
           curLevel=2;
           resetBoard = true;
         }
 
         // key 3 for level 3
-        else if (event.keyCode == 51)
+        else if (event.keyCode == 51 && !gameOver)
         {
           curLevel=3;
           resetBoard = true;
         }
 		
 		//key 4 for level 4
-		else if (event.keyCode == 52)
+		else if (event.keyCode == 52 && !gameOver)
         {
           curLevel=4;
           resetBoard = true;
         }
 				//key 5 for level 5
-		else if (event.keyCode == 53)
+		else if (event.keyCode == 53 && !gameOver)
         {
           curLevel=5;
           resetBoard = true;
         }
 
         // Key '9' fills board
-        else if (event.keyCode == 57)
+        else if (event.keyCode == 57 && !gameOver)
         {
           curLevel=-1;
           resetBoard = true;
         }
 
         // Key '0' Empties Board
-        else if (event.keyCode == 48)
+        else if (event.keyCode == 48 && !gameOver)
         {
           curLevel=0;
           resetBoard = true;
@@ -598,12 +600,16 @@ window.onload = function init() {
       // Ball is dead, move back to start position
 		}
 
-    else if (event.keyCode == 13)
+    else if (event.keyCode == 13 && gameOver)
     {
-      animateWall = true;
+      curLevel = 1;
+      curLife = 11;
+      curScore = 0;
+      gameOver = false;
+      isAlive = true;
     }
 
-			else if (event.keyCode == 83) //s to toggle music
+			else if (event.keyCode == 83 && !gameOver) //s to toggle music
 		{
 			play_song = !play_song;
 
@@ -1385,20 +1391,41 @@ var render = function(time){
     initLevel(curLevel);
   }
 
+      var seconds = time * 0.0015;
+
+
     // If ball is dead, move it back to 0. 
   if (isAlive == false)
   {
      start = false;
      isAlive = true;
 
+     if (curLife == 0)
+     {
+      gameOver = true;
+      isAlive = false;
+      
+      ctx.font = '20px joystix';
 
-     dx = 0;
-     dy = 0; 
-     dz = 0;
-     angle = angleInit;
-     pad.pos[0] = 0;
-     sphereBV = [0.0,0.0,7.0,0.5];
-     curLife--;
+
+      highScore = highScore > curScore ? highScore : curScore;
+
+      
+      ctx.fillText("Game Over", 400, 240); 
+      ctx.fillText("Final Score:" + curScore, 370, 260); 
+      ctx.fillText("Press enter to restart game.", 250, 280);
+      ctx.fillStyle = 'rgba(255,255,255,255)';
+     }
+     else {
+
+       dx = 0;
+       dy = 0; 
+       dz = 0;
+       angle = angleInit;
+       pad.pos[0] = 0;
+       sphereBV = [0.0,0.0,7.0,0.5];
+       curLife--;
+   }
   }
 
 
@@ -1407,14 +1434,16 @@ var render = function(time){
     //rotate cube
     rotateCube();
 
-    var seconds = time * 0.0015;
+
 
     //curScore
 
     ctx.font = '20px joystix';
     ctx.fillText("LEVEL:"+ curLevel, 10, 30);
     ctx.fillText("LIVES:"+curLife, 10, 60);
-    ctx.fillText("SCORE:"+curScore, 10, 90)
+    ctx.fillText("SCORE:"+curScore, 10, 90);
+    if (highScore > 0)
+      ctx.fillText("High score:"+ highScore,700,30);
 
     if (Math.floor(seconds) % 2 === 0 && !firstStart && (time > 4200))
     {
