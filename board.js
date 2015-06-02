@@ -1192,6 +1192,7 @@ var render = function(time){
 		moveR = true;
 		var sHitWall1 = new Audio("sounds/ballhitswall.wav");
 		sHitWall1.play();
+		CDPause = 1;
 	}
 	if (testSphere(BV[1], sphereBV))
 	{
