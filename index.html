@@ -38,32 +38,86 @@ uniform mat4 projectionMatrix; 	// projection
 uniform mat4 cameraMatrix; 		// camera
 uniform mat4 modelTransform;	// modelTransform 
 uniform bool drawingSphere;
-void main() 
-{               
-    fColor = vColor;
+
+
+precision mediump float;
+attribute vec4 vNormal;
+varying vec3 N, L, E;
+
+uniform bool isLit;
+
+
+uniform vec4 ambientProduct, diffuseProduct, specularProduct;
+uniform vec4 lightPosition;
+uniform float shininess;
+uniform mat3 normalMatrix;
+void main()
+{   
+	if (isLit) {
+		vec3 pos = (modelTransform * vPosition).xyz;
+    
+		// check for directional light
+    
+		if(lightPosition.w == 0.0) L = normalize(lightPosition.xyz);
+		else L = normalize( lightPosition.xyz - pos );
+    
+		E =  -normalize(pos);
+		N = normalize( vNormal.xyz);
+	}
+	else
+		fColor = vColor;
 	if (!drawingSphere){
 		fTexCoord = vTexCoord;
 	}
+	
     gl_Position = projectionMatrix * cameraMatrix * modelTransform * vPosition;
-} 
+}
 </script>
 
 <script id="fragment-shader" type="x-shader/x-fragment">
 precision mediump float;
 varying vec4 fColor;
-varying  vec2 fTexCoord;
+varying vec2 fTexCoord;
 uniform sampler2D texture;
 
 uniform bool drawingSphere;
+
+
+uniform bool isLit;
+
+uniform vec4 ambientProduct;
+uniform vec4 diffuseProduct;
+uniform vec4 specularProduct;
+uniform float shininess;
+varying vec3 N, L, E;
 void
 main()
 {
-	if (!drawingSphere){
-		gl_FragColor = fColor * texture2D( texture, fTexCoord );
-		//gl_FragColor = vec4(0.0,1.0,0.0,1.0);
-	} else {
-		gl_FragColor = vec4(1.0,0.0,0.0,1.0);
-	}
+	if (isLit) {
+		vec4 fColor;
+		
+		vec3 H = normalize( L + E );
+		vec4 ambient = ambientProduct;
+
+		float Kd = max( dot(L, N), 0.0 );
+		vec4  diffuse = Kd*diffuseProduct;
+
+		float Ks = pow( max(dot(N, H), 0.0), shininess );
+		vec4  specular = Ks * specularProduct;
+		
+		if( dot(L, N) < 0.0 ) specular = vec4(0.0, 0.0, 0.0, 1.0);
+
+		fColor = ambient + diffuse + specular;
+		fColor.a = 1.0;
+		
+		if (!drawingSphere)
+			gl_FragColor = fColor * texture2D( texture, fTexCoord );
+		else
+			gl_FragColor = fColor;
+	} else if (!isLit) {
+		if (!drawingSphere)
+			gl_FragColor = fColor * texture2D( texture, fTexCoord );
+	} 
 	
     // apply texture directly without color. 
     //gl_FragColor = texture2D( texture, fTexCoord );

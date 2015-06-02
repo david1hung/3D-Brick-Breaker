@@ -10,6 +10,8 @@ var numVertices  = 36;
 var texSize = 64;
 
 var program;
+var nBuffer1;
+var nBuffer2;
 
 var pointsArray = [];
 var colorsArray = [];
@@ -39,6 +41,7 @@ var CDPause = 0;
 var px = 0.0;
 var angleInit = 0.1;
 var angle = angleInit;
+var isLit;
 
 var angleL = 0.0;
 var padR = false;
@@ -70,6 +73,20 @@ var va = vec4(0.0,0.0,-1.0,1);
 var vb = vec4(0.0,0.942809,0.333333,1);
 var vc = vec4(-0.816497,-0.471405,0.333333,1);
 var vd = vec4(0.816497,-0.471405,0.333333,1);
+
+
+var lightPosition = vec4(0 ,0, 7, 1 );
+var lightAmbient = vec4(0.96, 0.35, 0.05, 1.0 );
+var lightDiffuse = vec4( 1.0, 1.0, 1.0, 1.0 );
+var lightSpecular = vec4( 1.0, 1.0, 1.0, 1.0 );
+
+var materialAmbient = vec4( 1.0, 0.0, 1.0, 1.0 );
+var materialDiffuse = vec4( 1.0, 0.8, 0.0, 1.0 );
+var materialSpecular = vec4( 1.0, 1.0, 1.0, 1.0 );
+var materialShininess = 20.0;
+
+var ambientProduct, diffuseProduct, specularProduct;
+var ambientLoc, diffuseLoc, specularLoc, shininessLoc, lightPosLoc;
 
 
 var vertices = [
@@ -110,6 +127,7 @@ var drawingSphere;
 
 var vTexCoord;
 var vColor;
+var vNormal;
 
 // Perspective Setup
 var near = 0.1; //0.2 , 40
@@ -145,6 +163,36 @@ function configureTexture(image) {
 }
 
 
+
+function setElements(object, lit){
+	if(object == "pad") {
+		materialAmbient = vec4( 1.0, 1.0, 1.0, 1.0 );
+		materialDiffuse = vec4( 1.0, 1.0, 1.0, 1.0 );
+		materialSpecular = vec4( 1.0, 1.0, 1.0, 1.0 );
+		materialShininess = 10.0;
+		gl.uniform4fv(lightPosLoc, flatten(vec4(pad.pos[0],pad.pos[1],pad.pos[2], 1.0)));
+	} else if(object == "ball"){
+		materialAmbient = vec4( 1.0, 0.0, 1.0, 1.0 );
+		materialDiffuse = vec4( 0.0, 0.5, 1.0, 1.0 );
+		materialSpecular = vec4( 1.0, 1.0, 1.0, 1.0 );
+		materialShininess = 30.0;
+	}
+
+
+	
+	ambientProduct = mult(lightAmbient, materialAmbient);
+    diffuseProduct = mult(lightDiffuse, materialDiffuse);
+    specularProduct = mult(lightSpecular, materialSpecular);
+	
+	gl.uniform4fv(ambientLoc, ambientProduct);
+	gl.uniform4fv(diffuseLoc, diffuseProduct);
+	gl.uniform4fv(specularLoc, specularProduct);
+	gl.uniform1f(shininessLoc, materialShininess);
+	gl.uniform1i(isLit, lit);
+}
+
+
+
 function quad(a, b, c, d) {
 
      pointsArray.push(vertices[a]); 
@@ -171,12 +219,26 @@ function quad(a, b, c, d) {
      colorsArray.push(vertexColors[a]);
      texCoordsArray.push(texCoord[3]);  
 
+	var t1 = subtract(vertices[b], vertices[a]);
+    var t2 = subtract(vertices[c], vertices[b]);
+    var normal = cross(t1, t2);
+    var normal = vec4(normal);
+	normal[3] = 0.0;
+
+
+	normalsArray.push(normal[0], normal[1], normal[2], normal[3]);
+	normalsArray.push(normal[0], normal[1], normal[2], normal[3]);
+	normalsArray.push(normal[0], normal[1], normal[2], normal[3]);
+	normalsArray.push(normal[0], normal[1], normal[2], normal[3]);
+	normalsArray.push(normal[0], normal[1], normal[2], normal[3]);
+	normalsArray.push(normal[0], normal[1], normal[2], normal[3]);
+	 
     texCoordsArray2.push(texCoord[0+4]);
     texCoordsArray2.push(texCoord[1+4]);   
     texCoordsArray2.push(texCoord[2+4]); 
     texCoordsArray2.push(texCoord[0+4]); 
     texCoordsArray2.push(texCoord[2+4]); 
-    texCoordsArray2.push(texCoord[3+4]);  
+    texCoordsArray2.push(texCoord[3+4]); 
 
 }
 
@@ -320,6 +382,7 @@ window.onload = function init() {
 	
     colorCube();
 	tetrahedron(va,vb,vc,vd,4,"smooth");
+	//colorCube();
 
     var cBuffer = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
@@ -328,6 +391,17 @@ window.onload = function init() {
     vColor = gl.getAttribLocation( program, "vColor" );
     gl.vertexAttribPointer( vColor, 4, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( vColor );
+	
+	//Buffer to hold the normals that our triangle function produced.
+	nBuffer = gl.createBuffer();
+	gl.bindBuffer( gl.ARRAY_BUFFER, nBuffer);
+	gl.bufferData( gl.ARRAY_BUFFER, flatten(normalsArray), gl.STATIC_DRAW);
+	
+	
+	//Sets the normals for our shader.
+	vNormal = gl.getAttribLocation( program, "vNormal" );
+    gl.vertexAttribPointer( vNormal, 4, gl.FLOAT, false, 0, 0 );
+    gl.enableVertexAttribArray( vNormal);
 
     var vBuffer = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
@@ -349,6 +423,12 @@ window.onload = function init() {
     cameraMatrixLoc = gl.getUniformLocation(program, "cameraMatrix");
     modelTransformLoc = gl.getUniformLocation(program, "modelTransform");
 	drawingSphere = gl.getUniformLocation(program, "drawingSphere");
+	isLit = gl.getUniformLocation( program, "isLit");
+	ambientLoc = gl.getUniformLocation( program, "ambientProduct");
+	diffuseLoc = gl.getUniformLocation( program, "diffuseProduct");
+	specularLoc = gl.getUniformLocation( program, "specularProduct");
+	shininessLoc = gl.getUniformLocation( program, "shininess");
+	lightPosLoc = gl.getUniformLocation( program, "lightPosition");
 
 
 
@@ -527,6 +607,10 @@ window.onload = function init() {
 	configureTexture(image);
 	image = document.getElementById(pad.texImage);
 	configureTexture(image);
+	
+	gl.uniform4fv( gl.getUniformLocation(program, 
+       "lightPosition"),flatten(lightPosition) );
+	
     requestAnimFrame(render);
  
 }
@@ -745,6 +829,7 @@ var sLoseLife = new Audio("sounds/loselife.wav");
 var render = function(time){
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+	gl.uniform1i(isLit, false);
 	var index = 3;
 
     // Configure Projection Matrix
@@ -889,6 +974,7 @@ var render = function(time){
     //setTexture(cube1Texture);
 	gl.bindTexture(gl.TEXTURE_2D, textures[1]);
 	gl.bufferData( gl.ARRAY_BUFFER, flatten(texCoordsArray), gl.STATIC_DRAW );
+	
     drawCubes(cube1Pos);
     drawCubes(dyingCubes1);
 
@@ -909,6 +995,8 @@ var render = function(time){
 
   //setTexture(pad.texImage);
 	gl.bindTexture(gl.TEXTURE_2D, textures[3]);
+	
+	gl.enableVertexAttribArray( vNormal );
   
   var modelTransform = mat4();
   if (padR == true)
@@ -919,7 +1007,9 @@ var render = function(time){
   modelTransform = mult(modelTransform, rotate(pad.angle, pad.rotateAxis));
   modelTransform = mult(modelTransform, scale(pad.scale));
   gl.uniformMatrix4fv(modelTransformLoc, false, flatten(modelTransform) );
-
+  gl.uniform1i(drawingSphere, false);
+  setElements("pad", true);
+	
   gl.drawArrays( gl.TRIANGLES, 0, numVertices );
 
   // Collision detection for the pad is added here.
@@ -1032,7 +1122,8 @@ var render = function(time){
 	gl.disableVertexAttribArray( vTexCoord );
 	gl.disableVertexAttribArray( vColor );
 	gl.uniform1i(drawingSphere, true);
-    gl.drawArrays( gl.TRIANGLES, numVertices, triIndex );
+	setElements("ball", true);
+	gl.drawArrays( gl.TRIANGLES, numVertices, triIndex);
 	
 
     // If ball is dead, move it back to 0. 
