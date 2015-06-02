@@ -603,7 +603,7 @@ window.onload = function init() {
     else if (event.keyCode == 13 && gameOver)
     {
       curLevel = 1;
-      curLife = 11;
+      curLife = 10;
       curScore = 0;
       gameOver = false;
       isAlive = true;
