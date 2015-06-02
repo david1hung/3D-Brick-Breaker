@@ -592,6 +592,7 @@ window.onload = function init() {
     // Press Enter to reset
     else if (event.keyCode == 13 && gameOver)
     {
+      resetBoard = true;
       curLevel = 1;
       curLife = 10;
       curScore = 0;
