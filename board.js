@@ -1376,7 +1376,7 @@ var render = function(time){
       angle = angleInit;
       isAlive = false;
       curLife++;
-	  		  var levelup = new Audio("sounds/levelup.wav");
+	  		  var levelup = new Audio("sounds/levelup2.wav");
 		levelup.play();
   }
 
