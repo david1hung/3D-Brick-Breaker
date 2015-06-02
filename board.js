@@ -1184,19 +1184,21 @@ var render = function(time){
 	if (testSphere(BV[0], sphereBV))
 	{
 		moveR = true;
-		sHitWall.play();
-		
+		var sHitWall1 = new Audio("sounds/ballhitswall.wav");
+		sHitWall1.play();
 	}
 	if (testSphere(BV[1], sphereBV))
 	{
 		moveR = false;
-				sHitWall.play();
+		var sHitWall2 = new Audio("sounds/ballhitswall.wav");
+		sHitWall2.play();
 		
 	}
 	if (testSphere(BV[2], sphereBV))
 	{
 		moveD = true;
-				sHitWall.play();
+		var sHitWall3 = new Audio("sounds/ballhitswall.wav");
+		sHitWall3.play();
 		
 	}
 	if (dz > 10)
