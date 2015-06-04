@@ -1492,9 +1492,9 @@ var render = function(time){
       highScore = highScore > curScore ? highScore : curScore;
 
       
-      ctx.fillText("Game Over", 635, 230); 
-      ctx.fillText("Final Score:" + curScore, 590, 260); 
-      ctx.fillText("Press enter to restart game.", 490, 290);
+      ctx.fillText("Game Over", 400, 230); 
+      ctx.fillText("Final Score:" + curScore, 370, 260); 
+      ctx.fillText("Press enter to restart game.", 250, 290);
       ctx.fillStyle = 'rgba(255,255,255,255)';
       
      }
