@@ -652,7 +652,7 @@ window.onload = function init() {
    image = document.getElementById("forest");
   configureTexture(image);
     // texture [7] 
-     image = document.getElementById("fire2");
+  image = document.getElementById("fire2");
   configureTexture(image);
 
     requestAnimFrame(render);
@@ -677,6 +677,7 @@ var cube2 = {'name': "cube2", 'pos': [1,0,8], 'scale':[1.9,0.95,1.9], 'texImage'
 var cube3 = {'name': "cube3", 'pos': [1.5,0,-5], 'scale':[1.9,0.95,1.9], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
 var cube4 = {'name': "cube4", 'pos': [1.5,0,-5], 'scale':[1.9,0.95,1.9], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
 var cube5 = {'name': "cube5", 'pos': [1.5,0,-5], 'scale':[1.9,0.95,1.9], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
+var cube6 = {'name': "cube6", 'pos': [1.5,0,-5], 'scale':[1.9,0.95,1.9], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
 
 var cube10 = {'name':"dyingCubes", 'pos': [1.5,0,-5], 'scale':[1.9*0.9,0.95*0.9,1.9*0.9], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
 var cube11 = {'name':"dyingCubes", 'pos': [1.5,0,-5], 'scale':[1.9*0.8,0.95*0.8,1.9*0.8], 'texImage':"texImage2",  'angle':180, 'rotationSpeed':5, 'rotateAxis': [1,0,0]};
@@ -717,7 +718,7 @@ function initLevel(i)
   {
     // Full board
     case -1:
-      board = board11;
+      board = boardWin;
       break;
 
       // Empty board
@@ -748,7 +749,7 @@ function initLevel(i)
 	 break;
 	 
     default:
-      board = board11;
+      board = boardWin;
   }
 
     for (var i = 0; i < 10; i++)
@@ -775,6 +776,7 @@ function getCube(i){
     case 3: return cube3; 
     case 4: return cube4; 
     case 5: return cube5; 
+    case 6: return cube6; 
 
 
     case 10: case 20: case 30: case 40: case 50: return cube10; 
@@ -1101,9 +1103,8 @@ var render = function(time){
     // 2. Draw the cubes
 	gl.bindTexture(gl.TEXTURE_2D, textures[1]);
 	gl.bufferData( gl.ARRAY_BUFFER, flatten(texCoordsArray), gl.STATIC_DRAW );
-	
     drawCubes(cube1Pos);
-    drawCubes(dyingCubes1);
+    //drawCubes(dyingCubes1);
 
     //setTexture(cube2Texture);
 	gl.bindTexture(gl.TEXTURE_2D, textures[2]);
@@ -1210,7 +1211,7 @@ var render = function(time){
 			// Check for the brick it hits and process it
 		  if (brickNum == 1)
 		  {
-				curBoard[BV[t][6]][BV[t][7]] = 10;
+				curBoard[BV[t][6]][BV[t][7]] = 2;
 				if (metal_index == 0)
 				{
 					var sHitMetal0 = new Audio("sounds/metalbreak.wav");
