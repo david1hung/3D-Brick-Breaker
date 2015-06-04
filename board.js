@@ -48,6 +48,11 @@ var px = 0.0;
 var angleInit = 0.1;
 var angle = angleInit;
 var isLit;
+var isFire = false;
+var ballLight = false;
+var padLight = true;
+var staticLight = false;
+var lightEverything = false;
 
 var angleL = 0.0;
 var padR = false;
@@ -88,7 +93,7 @@ var vc = vec4(-0.816497,-0.471405,0.333333,1);
 var vd = vec4(0.816497,-0.471405,0.333333,1);
 
 
-var lightPosition = vec4(0 ,0, 7, 1 );
+var lightPosition = vec4(0 ,5, 7, 1 );
 var lightAmbient = vec4(0.96, 0.35, 0.05, 1.0 );
 var lightDiffuse = vec4( 1.0, 1.0, 1.0, 1.0 );
 var lightSpecular = vec4( 1.0, 1.0, 1.0, 1.0 );
@@ -184,13 +189,24 @@ function setElements(object, lit){
 		materialDiffuse = vec4( 1.0, 1.0, 1.0, 1.0 );
 		materialSpecular = vec4( 1.0, 1.0, 1.0, 1.0 );
 		materialShininess = 10.0;
-		gl.uniform4fv(lightPosLoc, flatten(vec4(pad.pos[0],pad.pos[1],pad.pos[2], 1.0)));
+		//gl.uniform4fv(lightPosLoc, flatten(vec4(pad.pos[0],pad.pos[1],pad.pos[2], 1.0)));
 	} else if(object == "ball"){
-		materialAmbient = vec4( 1.0, 0.0, 1.0, 1.0 );
+		/*materialAmbient = vec4( 1.0, 0.0, 1.0, 1.0 );
 		materialDiffuse = vec4( 0.0, 0.5, 1.0, 1.0 );
 		materialSpecular = vec4( 1.0, 1.0, 1.0, 1.0 );
-		materialShininess = 30.0;
+		materialShininess = 30.0;*/
+    materialAmbient = vec4( 1.0, 1.0, 1.0, 1.0 );
+    materialDiffuse = vec4( 1.0, 0.5, 1.0, 1.0 );
+    materialSpecular = vec4( 1.0, 1.0, 1.0, 1.0 );
+    materialShininess = 30.0;
+    //gl.uniform4fv(lightPosLoc, flatten(vec4(sphereBV[0],sphereBV[1],sphereBV[2], 1.0)));
 	}
+  if (padLight)
+    gl.uniform4fv(lightPosLoc, flatten(vec4(pad.pos[0],pad.pos[1],pad.pos[2], 1.0)));
+  else if (ballLight)
+    gl.uniform4fv(lightPosLoc, flatten(vec4(sphereBV[0],sphereBV[1],sphereBV[2], 1.0)));
+  else if (staticLight)
+    gl.uniform4fv(lightPosLoc, flatten(lightPosition));
 
 
 	
@@ -444,6 +460,8 @@ window.onload = function init() {
 	shininessLoc = gl.getUniformLocation( program, "shininess");
 	lightPosLoc = gl.getUniformLocation( program, "lightPosition");
 
+  gl.uniform4fv(lightPosLoc, flatten(lightPosition));
+
 
 
     document.addEventListener('keydown', function(event){
@@ -588,6 +606,32 @@ window.onload = function init() {
 
       // Ball is dead, move back to start position
 		}
+    else if (event.keyCode == 90)
+    {
+      ballLight = true;
+      padLight = false;
+      staticLight = false;
+    }
+    else if (event.keyCode == 88)
+    {
+      ballLight = false;
+      padLight = true;
+      staticLight = false;
+    }
+    else if (event.keyCode == 67)
+    {
+      ballLight = false;
+      padLight = false;
+      staticLight = true;
+    }
+    else if (event.keyCode == 86)
+    {
+      lightEverything = !lightEverything;
+    }
+    else if (event.keyCode == 70)
+    {
+      isFire = !isFire;
+    }
 
     // Press Enter to reset
     else if (event.keyCode == 13 && gameOver)
@@ -858,7 +902,7 @@ var sLoseLife = new Audio("sounds/loselife.wav");
 var render = function(time){
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-	gl.uniform1i(isLit, false);
+	gl.uniform1i(isLit, lightEverything);
 	var index = 3;
 
     // Configure Projection Matrix
@@ -1130,7 +1174,7 @@ var render = function(time){
 
 	gl.bindTexture(gl.TEXTURE_2D, textures[3]);
 	
-	gl.enableVertexAttribArray( vNormal );
+	//gl.enableVertexAttribArray( vNormal );
   
   var modelTransform = mat4();
   if (padR == true && pad.pos[0] < 11.2)
@@ -1158,21 +1202,21 @@ var render = function(time){
 	// (ie, for every brick we are currently drawing). This happens at
 	// at every render call, so it might be a bit inefficient. We could
 	// make it better by using bounding volume hierarchies.
-	if (testSphere(BV[0], sphereBV))
+	if (dx < -9 && dz < 7)//(testSphere(BV[0], sphereBV))
 	{
 		moveR = true;
 		var sHitWall1 = new Audio("sounds/ballhitswall.wav");
 		sHitWall1.play();
 		CDPause = 1;
 	}
-	if (testSphere(BV[1], sphereBV))
+	if (dx > 9 && dz < 7)//(testSphere(BV[1], sphereBV))
 	{
 		moveR = false;
 		var sHitWall2 = new Audio("sounds/ballhitswall.wav");
 		sHitWall2.play();
 		
 	}
-	if (testSphere(BV[2], sphereBV))
+	if (dz < -23.5)//(testSphere(BV[2], sphereBV))
 	{
 		moveD = true;
 		var sHitWall3 = new Audio("sounds/ballhitswall.wav");
@@ -1186,23 +1230,25 @@ var render = function(time){
   }
 	for (var t = 3; t < index-1; t++) {
 		if (CDPause == 0 && testSphere(BV[t], sphereBV)) {
-			switch (testSide(BV[t], sphereBV)) {
-				case 1:
-					moveR = false;
-					break;
-				case 2:
-					moveR = true;
-					break;
-				case 5:
-					moveD = true;
-					break;
-				case 6:
-					moveD = false;
-					break;
-				default:
-					moveD = !moveD;
-					break;
-			}
+      if (!isFire) {
+  			switch (testSide(BV[t], sphereBV)) {
+  				case 1:
+  					moveR = false;
+  					break;
+  				case 2:
+  					moveR = true;
+  					break;
+  				case 5:
+  					moveD = true;
+  					break;
+  				case 6:
+  					moveD = false;
+  					break;
+  				default:
+  					moveD = !moveD;
+  					break;
+  			}
+      }
 			//moveD = !moveD; // We change the state of the balls movement to bounce back.
 			var brickNum = curBoard[BV[t][6]][BV[t][7]];
 
