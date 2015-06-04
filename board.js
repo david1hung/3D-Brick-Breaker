@@ -762,7 +762,10 @@ function setRandomBoard()
     {
       for (var j = 0; j < 9; j++)
       {
-          boardRandom[i][j] = Math.floor(Math.random()*6);
+          if (Math.floor(Math.random()*10)<7)
+                boardRandom[i][j] = Math.floor(Math.random()*6);
+          else
+                boardRandom[i][j] = 0;
       }
     }
 }
@@ -1485,9 +1488,9 @@ var render = function(time){
       highScore = highScore > curScore ? highScore : curScore;
 
       
-      ctx.fillText("Game Over", 400, 240); 
-      ctx.fillText("Final Score:" + curScore, 370, 260); 
-      ctx.fillText("Press enter to restart game.", 250, 280);
+      ctx.fillText("Game Over", 635, 230); 
+      ctx.fillText("Final Score:" + curScore, 590, 260); 
+      ctx.fillText("Press enter to restart game.", 490, 290);
       ctx.fillStyle = 'rgba(255,255,255,255)';
       
      }
@@ -1500,16 +1503,16 @@ var render = function(time){
     //////////////////
 
     ctx.font = '20px joystix';
-    ctx.fillText("LEVEL:"+ curLevel, 10, 30);
-    ctx.fillText("LIVES:"+curLife, 10, 60);
-    ctx.fillText("SCORE:"+curScore, 10, 90);
+    ctx.fillText("LEVEL:"+ curLevel, 150, 30);
+    ctx.fillText("LIVES:"+curLife, 150, 60);
+    ctx.fillText("SCORE:"+curScore, 150, 90);
     if (highScore > 0)
-      ctx.fillText("High score:"+ highScore,700,30);
+      ctx.fillText("High score:"+ highScore,150,120);
 
     if (Math.floor(seconds) % 2 === 0 && !firstStart && (time > 4200))
     {
       ctx.font = '20px joystix';
-      ctx.fillText("Press the space bar to start game.", 203, 270); 
+      ctx.fillText("Press the space bar to start game.", 480, 305); 
 
     }
 
