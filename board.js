@@ -1385,14 +1385,18 @@ var render = function(time){
 					moveR = true;
 				if (moveR)
 					angle += 0.05;
-				else
-					angle -= 0.05;
+				else {
+          if (angle >= 0.05)
+					 angle -= 0.05;
+        }
 			}
 			if (padL) {
 				if (angle == 0.0)		
 					moveR = false;	
-				if (moveR)
-					angle -= 0.05;	
+				if (moveR) {
+          if (angle >= 0.05)
+					 angle -= 0.05;	
+        }
 				else
 					angle += 0.05;	
 			}
