@@ -555,16 +555,23 @@ window.onload = function init() {
           resetBoard = true;
         }
 		
-		//key 4 for level 4
-		else if (event.keyCode == 52 && !gameOver)
+		    //key 4 for level 4
+		    else if (event.keyCode == 52 && !gameOver)
         {
           curLevel=4;
           resetBoard = true;
         }
 				//key 5 for level 5
-		else if (event.keyCode == 53 && !gameOver)
+		    else if (event.keyCode == 53 && !gameOver)
         {
           curLevel=5;
+          resetBoard = true;
+        }
+
+        // key 6 for level win!
+        else if (event.keyCode == 54 && !gameOver)
+        {
+          curLevel=6;
           resetBoard = true;
         }
 
@@ -704,6 +711,19 @@ function getCubePos(i, j)
   return [x,y,z];
 }
 
+// Generates Random level
+function setRandomBoard()
+{
+    for (var i = 0; i < 10; i++)
+    {
+      for (var j = 0; j < 9; j++)
+      {
+          boardRandom[i][j] = Math.floor(Math.random()*6);
+      }
+    }
+}
+
+
 
 // Initializes level, 
 function initLevel(i)
@@ -718,7 +738,8 @@ function initLevel(i)
   {
     // Full board
     case -1:
-      board = boardWin;
+      setRandomBoard();
+      board = boardRandom;
       break;
 
       // Empty board
@@ -747,9 +768,14 @@ function initLevel(i)
 	 case 5:
 	   board = board5;
 	 break;
+
+   case 6: 
+    board = boardWin;
+    break;
 	 
     default:
-      board = boardWin;
+      setRandomBoard();
+      board = boardRandom;
   }
 
     for (var i = 0; i < 10; i++)
