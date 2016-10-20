@@ -1,6 +1,6 @@
 # team13-term-project
 
-## Castle Breaker!
+## Castle Breaker! [Play it Here!](http://david1hung.github.io/3D-Brick-Breaker/)
 
 ### Team Members
 - David Hung 
@@ -11,8 +11,10 @@
 ##Intro
 Revolutionizing the brick breaker genre. With innovative techniques meant to spur a new kind of gameplay in the 3D realm, check out our new amazing features such as collision detection, Phong shading and multi-geometry instantiation. 
 
+### [Play it Here!](http://david1hung.github.io/3D-Brick-Breaker/)
+
 ##Actual Intro
-Our group make a a brick breaker like game in 3D. Levels include normal bricks, metal bricks, ice bricks, tree bricks, and fire bricks. Left/right keys are the main keyboard control and everything else should be easy to understand. Levels can be manually changed to 1-5 by pressing the corresponding keys on the keyboard. 
+Our group made a a brick breaker like game in 3D. Levels include normal bricks, metal bricks, ice bricks, tree bricks, and fire bricks. Left/right keys are the main keyboard control and everything else should be easy to understand. Levels can be manually changed to 1-5 by pressing the corresponding keys on the keyboard. 
 
 
 ##Key Commands
